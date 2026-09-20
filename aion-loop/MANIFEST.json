@@ -1,10 +1,10 @@
 {
  "product": "aion-loop",
  "version": "0.1.0",
- "built": "2026-09-20T16:14:43-0400",
+ "built": "2026-09-20T16:16:51-0400",
  "source_canon": "<AION_ROOT> (public kit build; company data removed)",
  "source_commit": "8ddcca17c31fd83bdfacc79cfd2eb4ec243d8b9a",
- "files": 97,
+ "files": 73,
  "external": {
   "codex": "Codex app-server (director and judge) — optional; solo mode: `claude -p` (see INSTALL.md)",
   "judge_venv": "$AION_JUDGE_PYTHON — Python 3.12 + inspect_ai (requirements-sudya.txt); optional",
@@ -169,7 +169,7 @@
   },
   {
    "path": "checklist/opredelenie.json",
-   "sha256": "d3c12136330c3418c23a196f4e7d5fc958df318517083babc8e829b8de3f40c2",
+   "sha256": "802f3033188c0b63c4aad780f12fa154bd2987b8ae68d5b5593e5c3a67b55396",
    "source": "checklist/opredelenie.json"
   },
   {
@@ -184,13 +184,8 @@
   },
   {
    "path": "checklist/sobrat.py",
-   "sha256": "7e0de7c53b519b7cdee9486176c9c40d6b32e00537a64d48631b5fad5ad01596",
+   "sha256": "e0fbed13142ee813632b5ede3ec6d7c6dcbde16f5aee8d6f32dcaf3ff7755227",
    "source": "checklist/sobrat.py"
-  },
-  {
-   "path": "checklist/sostoyanie.json",
-   "sha256": "23aa23c16ace1cfae4c52d8590960f7b5cae0c79b86b83519fb926c20418e93d",
-   "source": "checklist/sostoyanie.json"
   },
   {
    "path": "checklist/vorota.py",
@@ -223,21 +218,6 @@
    "source": "docs/README.md"
   },
   {
-   "path": "evidence/N-L0-02/otchet.md",
-   "sha256": "29d99579f375daf7afa402d8ff8f53064a6674a80908dca4c744bfeac9fe4ecf",
-   "source": "evidence/N-L0-02/otchet.md"
-  },
-  {
-   "path": "evidence/N-L0-02/vyvod-prob.txt",
-   "sha256": "c9cc5958d20f2ac926166a20868eae13fd4bee02d185bf0da5d38702ab3db6de",
-   "source": "evidence/N-L0-02/vyvod-prob.txt"
-  },
-  {
-   "path": "evidence/README.md",
-   "sha256": "3a8516e7fff5a9e4d2b0bc1af2cc1ccdbd5fdbf1d132f9e1714bdac9a998381a",
-   "source": "evidence/README.md"
-  },
-  {
    "path": "mailbox/iz_sessii.py",
    "sha256": "0f53dac4a73c471fe6d9421f1a136e4c25dce6abe3d1cca5b40449f19a1e3b1e",
    "source": "mailbox/iz_sessii.py"
@@ -258,101 +238,6 @@
    "source": "proverit-komplekt.py"
   },
   {
-   "path": "registries/README.md",
-   "sha256": "0629fbdfc20bf8813dcf41b74ab87a44d4fe39daab2792c1f649a4071faefe32",
-   "source": "registries/README.md"
-  },
-  {
-   "path": "registries/ai-exchange-ledger.jsonl",
-   "sha256": "e30836c914629387028d74b1801ae87d75937f6e7d35b8c26829d0ab5fdaeb37",
-   "source": "registries/ai-exchange-ledger.jsonl"
-  },
-  {
-   "path": "registries/company.jsonl",
-   "sha256": "6e5b4144f8a117a2294d1eaf17b87ed4cf4f97caf411f2e14db3d94b1503f09a",
-   "source": "registries/company.jsonl"
-  },
-  {
-   "path": "registries/decisions.jsonl",
-   "sha256": "930b71f54066c026aa7e7bbfcd742a7d9f75be91f5b0087c47d86584e246a9d1",
-   "source": "registries/decisions.jsonl"
-  },
-  {
-   "path": "registries/failures.jsonl",
-   "sha256": "202eb8dac69d8c3d20a7d425a7ecc587a9ed02b56fdac2745d986efc7206b39f",
-   "source": "registries/failures.jsonl"
-  },
-  {
-   "path": "registries/incidents.jsonl",
-   "sha256": "a0b47bae34c1ef70321e3764a6d6700c2e53cc9859e82c1074e6691241e5ac45",
-   "source": "registries/incidents.jsonl"
-  },
-  {
-   "path": "registries/invariants.jsonl",
-   "sha256": "35a2c1e96e8ee721ae30e8814c45127b3e49385467f422b2a5bbf1f25547f05e",
-   "source": "registries/invariants.jsonl"
-  },
-  {
-   "path": "registries/istochniki/company.jsonl",
-   "sha256": "6e5b4144f8a117a2294d1eaf17b87ed4cf4f97caf411f2e14db3d94b1503f09a",
-   "source": "registries/istochniki/company.jsonl"
-  },
-  {
-   "path": "registries/istochniki/product-manifest.jsonl",
-   "sha256": "be6444419635471df02dc6f3e025498372cac7eafc30c1da24353578b8da7d6f",
-   "source": "registries/istochniki/product-manifest.jsonl"
-  },
-  {
-   "path": "registries/istochniki/resheniya-novye.jsonl",
-   "sha256": "930b71f54066c026aa7e7bbfcd742a7d9f75be91f5b0087c47d86584e246a9d1",
-   "source": "registries/istochniki/resheniya-novye.jsonl"
-  },
-  {
-   "path": "registries/methods.jsonl",
-   "sha256": "84a39f067c87635fd4e1ba25a4df10c3aad3b50e991fb84c6049ccd85b623b30",
-   "source": "registries/methods.jsonl"
-  },
-  {
-   "path": "registries/otkazy-novye.jsonl",
-   "sha256": "202eb8dac69d8c3d20a7d425a7ecc587a9ed02b56fdac2745d986efc7206b39f",
-   "source": "registries/otkazy-novye.jsonl"
-  },
-  {
-   "path": "registries/owner-decision-queue.jsonl",
-   "sha256": "84d70c97b7f54f75042a60dbfac39203ee6ae52ddda240f4a03ca97c2ff3b2e4",
-   "source": "registries/owner-decision-queue.jsonl"
-  },
-  {
-   "path": "registries/patterns.jsonl",
-   "sha256": "5a9c126cb0c379be8db587d6d1e2ba908c946b96d2bf55e69cfe9d70d6907862",
-   "source": "registries/patterns.jsonl"
-  },
-  {
-   "path": "registries/perehody-diagnostiki.ndjson",
-   "sha256": "0bb2259238c4fec35675bbb400e11004caf959146d068bdf52c0a74a983df41b",
-   "source": "registries/perehody-diagnostiki.ndjson"
-  },
-  {
-   "path": "registries/product-manifest.jsonl",
-   "sha256": "fde201f2b1f1b0d6d5ad63cabc33097e51d012e16a35400c303cdd7adf5f2288",
-   "source": "registries/product-manifest.jsonl"
-  },
-  {
-   "path": "registries/regressii-zhurnal.ndjson",
-   "sha256": "8fed9e0720b4511aab8e917f586aa88830207087af25ec7ae8dbc73274096fbb",
-   "source": "registries/regressii-zhurnal.ndjson"
-  },
-  {
-   "path": "registries/semeystva.jsonl",
-   "sha256": "2e891b30682f7a6955e4d9cea6a533addf763cea3acdf8730f48c14f9bb6165c",
-   "source": "registries/semeystva.jsonl"
-  },
-  {
-   "path": "registries/sledy/.gitkeep",
-   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "source": "registries/sledy/.gitkeep"
-  },
-  {
    "path": "requirements-sudya.txt",
    "sha256": "c894d35ff3053ce9eb0da6cdf5eda5ea51a07fff7cc601092a4a242c9526afe4",
    "source": "requirements-sudya.txt"
@@ -361,11 +246,6 @@
    "path": "state/schema.json",
    "sha256": "2acdc174f10a258e8dbe0b498da7029282b5d0024df3fa09356fe94929d6dfb8",
    "source": "state/schema.json"
-  },
-  {
-   "path": "state/snapshots/.gitkeep",
-   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-   "source": "state/snapshots/.gitkeep"
   },
   {
    "path": "state/sostoyanie.py",
@@ -497,5 +377,6 @@
    "sha256": "82359a8d7c69eba2ce14a1d63fa41bef40d3fd6204af18eb8dfbe17de58b1d81",
    "source": "sync/uninstall-launchd.sh"
   }
- ]
+ ],
+ "note": "live state (checklist board and letopis, registries, evidence) is not fingerprinted — it is yours to change"
 }
