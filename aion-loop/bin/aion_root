@@ -1,0 +1,38 @@
+#!/bin/bash
+# aion_root — печатает корень AION или STOP.
+#
+# Корень находится ПО МАРКЕРУ .aion-root, не по переменной окружения
+# (INV-ORIENT-001). Порядок поиска:
+#   1. если задан AION_HOME — он ОБЯЗАН содержать настоящий маркер,
+#      иначе отвергается словом STOP (подложный путь не проходит);
+#   2. вверх от текущей папки — так корень находится и после переименования;
+#   3. каноническое место <AION_ROOT>;
+#   4. соседние папки владельца и /Users/Shared.
+# Ничего не нашлось — STOP с кодом 1. Ничего не пишет и не создаёт.
+set -u
+MARKER=.aion-root
+TOKEN=AION-ROOT-MARKER-v1
+
+valid() { [ -f "$1/$MARKER" ] && [ "$(head -1 "$1/$MARKER" 2>/dev/null)" = "$TOKEN" ]; }
+
+if [ -n "${AION_HOME:-}" ]; then
+  if valid "$AION_HOME"; then
+    cd "$AION_HOME" 2>/dev/null && pwd -P; exit 0
+  fi
+  echo "STOP: AION_HOME=$AION_HOME без маркера $MARKER — отвергнут" >&2
+  exit 2
+fi
+
+d=$(pwd -P)
+while [ "$d" != "/" ]; do
+  valid "$d" && { echo "$d"; exit 0; }
+  d=$(dirname "$d")
+done
+
+for d in <AION_ROOT> <HOME>/*/ /Users/Shared/*/; do
+  d=${d%/}
+  valid "$d" && { echo "$d"; exit 0; }
+done
+
+echo "STOP: корень AION не найден (маркер $MARKER)" >&2
+exit 1

@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Тумблер петли AION LOOP — по слову владельца, петлю не ломает.
+
+    aion-loop off      пауза: рука живёт, но не выдаёт задач, не судит, не пишет в окно;
+                       сторож останавливается; доска, очередь, доставки — нетронуты
+    aion-loop on       вперёд: пауза снята, рука продолжает с того же места
+                       (поднимается, если была мертва); сторож — только если был включён
+    aion-loop status   жива ли рука, пауза ли, доска, очередь, последняя строка журнала
+
+Механика: пауза — это файл svyaz/state/PAUZA; рука проверяет его на каждом тике
+(20 с). Ничего не убивается посреди хода: если в момент «off» идёт суд или выдача,
+они доходят до конца, и только следующий тик замирает.
+"""
+import datetime as dt
+import json
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+КОРЕНЬ = Path(__file__).resolve().parent.parent
+СВЯЗЬ = КОРЕНЬ / "svyaz"
+ПАУЗА = СВЯЗЬ / "state" / "PAUZA"
+СТОРОЖ_БЫЛ = СВЯЗЬ / "state" / "STOROJ-BYL-VKLYUCHEN"
+РУКА = СВЯЗЬ / "src" / "runner.py"
+ТАЙМЕР = СВЯЗЬ / "state" / "storoj-timer.sh"
+
+
+def pids(образец: str) -> list:
+    r = subprocess.run(["pgrep", "-f", образец], capture_output=True, text=True)
+    return [int(x) for x in r.stdout.split() if x.isdigit() and int(x) != os.getpid()]
+
+
+def status() -> int:
+    рука = pids("src/runner.py")
+    сторож = pids("storoj-timer.sh")
+    доска = subprocess.run([sys.executable, str(КОРЕНЬ / "checklist" / "vorota.py"), "status"], capture_output=True, text=True).stdout.splitlines()
+    очередь = subprocess.run([sys.executable, str(СВЯЗЬ / "src" / "mailqueue.py"), "status"], capture_output=True, text=True).stdout.strip()
+    журнал = (СВЯЗЬ / "state" / "runner.log").read_text(encoding="utf-8").splitlines()[-1:] if (СВЯЗЬ / "state" / "runner.log").exists() else []
+    print("=== AION LOOP ===")
+    print(f"  тумблер: {'ПАУЗА (' + ПАУЗА.read_text(encoding='utf-8').strip()[:80] + ')' if ПАУЗА.exists() else 'ВПЕРЁД'}")
+    print(f"  рука:    {'жива, pid ' + str(рука[0]) if рука else 'НЕ ЗАПУЩЕНА'}")
+    print(f"  сторож:  {'жив, pid ' + str(сторож[0]) if сторож else 'выключен'}")
+    print(f"  доска:   {doska if (doska := (доска[0] if доска else '?')) else '?'}")
+    print(f"           {доска[1] if len(доска) > 1 else ''}")
+    print(f"  очередь: {очередь}")
+    print(f"  журнал:  {журнал[0][:120] if журнал else '—'}")
+    return 0
+
+
+def off() -> int:
+    if ПАУЗА.exists():
+        print("уже на паузе"); return status()
+    ПАУЗА.write_text(f"{dt.datetime.now().astimezone().isoformat(timespec='seconds')} владелец: приоритетная работа\n", encoding="utf-8")
+    сторож = pids("storoj-timer.sh")
+    if сторож:
+        СТОРОЖ_БЫЛ.write_text("1", encoding="utf-8")
+        for p in сторож:
+            try: os.kill(p, 15)
+            except ProcessLookupError: pass
+        print("сторож остановлен (включится обратно на «on»)")
+    else:
+        if СТОРОЖ_БЫЛ.exists(): СТОРОЖ_БЫЛ.unlink()
+    print("ПАУЗА: рука замрёт на следующем тике (до 20 с); доска, очередь, доставки нетронуты")
+    return status()
+
+
+def on() -> int:
+    if ПАУЗА.exists():
+        ПАУЗА.unlink()
+        print("пауза снята")
+    if not pids("src/runner.py"):
+        # рука мертва — поднять; --reset не делаем: если она стояла по причине, причина остаётся видимой
+        st = СВЯЗЬ / "state" / "runner.json"
+        if st.exists() and json.loads(st.read_text(encoding="utf-8")).get("stopped"):
+            причина = json.loads(st.read_text(encoding="utf-8")).get("reason")
+            print(f"рука стоит по причине: {причина}\n  снять: python3 {РУКА} --reset  (после того как причина решена)")
+        else:
+            subprocess.Popen(["nohup", sys.executable, str(РУКА)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            time.sleep(2)
+            print("рука поднята")
+    if СТОРОЖ_БЫЛ.exists() and not pids("storoj-timer.sh"):
+        subprocess.Popen(["nohup", "bash", str(ТАЙМЕР)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        print("сторож включён обратно")
+    print("ВПЕРЁД: рука продолжает с того же места")
+    return status()
+
+
+if __name__ == "__main__":
+    a = sys.argv[1:]
+    cmd = a[0] if a else "status"
+    sys.exit({"on": on, "off": off, "status": status, "pauza": off, "vperyod": on}.get(cmd, lambda: (print(__doc__), 2)[1])())

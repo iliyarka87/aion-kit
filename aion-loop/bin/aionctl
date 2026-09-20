@@ -1,0 +1,569 @@
+#!/usr/bin/env python3
+"""aionctl — детерминированный старт и восстановление AION.
+
+    aionctl bootstrap    ориентация для свежей сессии: 00 -> 05 -> позиция
+    aionctl resume       то же + доска чек-листа + последние шаги летописи
+    aionctl reconcile    сверка канона с действительностью (L0.11):
+                         DRIFT / DOCUMENT_CONFLICT / UNKNOWN, не молчаливое допущение
+    aionctl context <задача> [--cat]
+                         маршрутизатор контекста (L0.8): точный пакет документов
+                         под тип задачи по routes.json; нет маршрута — ROUTE_NOT_FOUND
+    aionctl routes       какие типы задач известны
+    aionctl orient [--json]
+                         десять полей ориентации (WHO … NEXT), каждое со ссылкой
+                         на источник на диске; для потери контекста и сжатия (L0.9/L0.10)
+    aionctl gate <действие>
+                         ворота изменения, закрытые по умолчанию (L2 / P0-09): семь
+                         условий запрета, каждое названо; чисто — ALLOW (код 0),
+                         иначе BLOCKED (код 3); неизвестность и ошибка проверки — BLOCKED
+    aionctl laws         законы §32: класс принуждения каждого, полнота списка,
+                         доля PROMPT_ONLY («только слова») названа честно и поимённо
+
+Закон INV-ORIENT-002: ничего здесь не зависит от крючков. Это просто
+команда — её можно вызвать рукой, из скрипта, из крючка или без него.
+Все данные берутся с диска: 00-START-HERE, state/current.json (машинное
+зеркало 05), checklist/, git. Память разговора не источник.
+
+Закон INV-ORIENT-003: нет маршрута — нет выдумки. Маршрут ищется только по
+точному имени. Ни похожего имени, ни запасного маршрута, ни «на всякий случай
+всё подряд»: неизвестная задача получает ROUTE_NOT_FOUND и код 2.
+"""
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+СВОЁ = Path(__file__).resolve().parent
+ROUTE_NOT_FOUND = "ROUTE_NOT_FOUND"
+
+
+def корень():
+    р = subprocess.run([str(СВОЁ / "aion_root")], capture_output=True, text=True)
+    if р.returncode != 0:
+        return None, (р.stderr or р.stdout).strip()
+    return Path(р.stdout.strip()), ""
+
+
+def зов(*дов, cwd=None):
+    р = subprocess.run(list(дов), capture_output=True, text=True, cwd=cwd)
+    return р.returncode, ((р.stdout or "") + (р.stderr or "")).strip()
+
+
+def строка(т):
+    print(т)
+
+
+def bootstrap(к):
+    строка("=== AION · ОРИЕНТАЦИЯ (bootstrap) ===")
+    строка(f"корень: {к}")
+    # 1. правило из 00
+    нуль = (к / "00-START-HERE.md").read_text(encoding="utf-8").splitlines()
+    правило = [с for с in нуль[3:12] if с.strip()]
+    строка("правило 00:")
+    for с in правило:
+        строка(f"  {с}")
+    # 2. позиция из машинного зеркала 05
+    тек = json.loads((к / "state" / "current.json").read_text(encoding="utf-8"))
+    строка("позиция (state/current.json ← 05):")
+    for п in ("current_phase", "current_product", "current_change", "current_task",
+              "next_authorized_step", "last_checkpoint", "state_status"):
+        з = тек.get(п)
+        строка(f"  {п:22} = {(з or 'NEEDS_MEASUREMENT')[:110]}")
+    строка(f"  {'blockers':22} = {len(тек.get('blockers') or [])} шт")
+    строка(f"  {'needs_measurement':22} = {', '.join(тек.get('needs_measurement') or []) or '—'}")
+    строка(f"  источник 05: {тек['source']['updated_at']}  sha {тек['source']['sha256'][:12]}…")
+    return 0
+
+
+def resume(к):
+    код = bootstrap(к)
+    строка("")
+    строка("=== ГДЕ МЫ (resume) ===")
+    к_, доска = зов(sys.executable, str(к / "checklist" / "vorota.py"), "status")
+    for с in доска.splitlines():
+        строка(f"  {с}")
+    к_, ист = зов(sys.executable, str(к / "checklist" / "vorota.py"), "history", "5")
+    строка("последние шаги:")
+    for с in ист.splitlines():
+        строка(f"  {с[:120]}")
+    return код
+
+
+def reconcile(к, дов=()):
+    """Сверка желаемого с фактическим по пяти областям (L0.11).
+
+    Желаемое лежит в state/zhelaemoe.json и в самих документах канона;
+    фактическое читается с диска и из системы. Любое расхождение названо
+    по области и по имени, итог — DRIFT и код 1: публикация закрыта.
+    --dlya-publikacii  режим для sync: область git не блокирует, потому что
+                       незакоммиченное и «впереди сервера» sync и чинит.
+    """
+    для_публикации = "--dlya-publikacii" in дов
+    строка("=== СВЕРКА (reconcile, L0.11) ===")
+    беды = []
+
+    def итог(область, имя, ок, что=""):
+        if ок is None:
+            строка(f"  [UNKNOWN] {область}: {имя}  {что}")
+            беды.append(f"{область}: {имя} — неизвестно {что}".strip())
+        elif ок:
+            строка(f"  [OK     ] {область}: {имя}")
+        else:
+            строка(f"  [DRIFT  ] {область}: {имя}  {что}")
+            беды.append(f"{область}: {имя} — {что}".strip())
+
+    def первое(текст, начало, разделитель="="):
+        for с in текст.splitlines():
+            if с.strip().startswith(начало):
+                return с.split(разделитель, 1)[1].split("(")[0].strip()
+        return None
+
+    # ---- документы: машинное зеркало, определение чек-листа, версии, событие ----
+    к_, в = зов(sys.executable, str(к / "state" / "sostoyanie.py"), "--proverit")
+    итог("документы", "state/current.json = 05", к_ == 0,
+         v.splitlines()[-1][:100] if (к_ and (v := в)) else "")
+    к_, в = зов(sys.executable, str(к / "checklist" / "sobrat.py"), "--сверка")
+    итог("документы", "checklist/opredelenie = источнику", к_ == 0, в[:100] if к_ else "")
+    # ---- ось власти (L0.7): уровень из authority.json = строке в шапке; без строки — предупреждение ----
+    предупреждения = []
+    уровни = {}
+    try:
+        ось = json.loads((к / "authority.json").read_text(encoding="utf-8"))["документы"]
+    except (OSError, ValueError, KeyError) as ошибка:
+        итог("документы", "authority.json читается", None, str(ошибка)[:80])
+        ось = {}
+    for имя_д, з in ось.items():
+        путь_д = к / имя_д
+        if not путь_д.exists():
+            предупреждения.append(f"{имя_д}: в authority.json есть, на диске нет")
+            continue
+        шапка = путь_д.read_text(encoding="utf-8").splitlines()[:40]
+        в_шапке = next((int(с.split("=", 1)[1].strip()) for с in шапка
+                        if с.strip().startswith("AUTHORITY_LEVEL") and "=" in с
+                        and с.split("=", 1)[1].strip().isdigit()), None)
+        if в_шапке is None:
+            предупреждения.append(f"{имя_д}: без AUTHORITY_LEVEL в шапке (в authority.json {з['уровень']})")
+        elif в_шапке != з["уровень"]:
+            предупреждения.append(f"{имя_д}: в шапке {в_шапке}, в authority.json {з['уровень']}")
+        уровни[имя_д] = з["уровень"]
+    к_, в = зов(sys.executable, str(к / "bin" / "sobrat-05.py"), "--sverka")
+    if к_ != 0:
+        предупреждения.append("05: блок ДОСКА отстал от доски — sobrat-05.py")
+    for пр in предупреждения:
+        строка(f"  [WARN   ] документы: {пр}")
+    if ось and not предупреждения:
+        строка(f"  [OK     ] документы: ось власти — {len(уровни)} документов, уровни в шапках = authority.json")
+
+    def кто_главнее(а, б):
+        """Победитель конфликта — по уровню, не по порядку чтения. Равные или неизвестные — никто."""
+        уа, уб = уровни.get(а), уровни.get(б)
+        if уа is None or уб is None or уа == уб:
+            return None
+        return а if уа > уб else б
+
+    def конфликт(имя, а, за, б, зб):
+        поб = кто_главнее(а, б)
+        if поб is None:
+            return f"{а} говорит {за}, {б} говорит {зб}; уровни не решают — нужен владелец"
+        истина = за if поб == а else зб
+        проиграл = б if поб == а else а
+        return (f"{а} говорит {за}, {б} говорит {зб}; побеждает {поб} "
+                f"(уровень {уровни[поб]} > {уровни[проиграл]}): истина {истина}, поправить {проиграл}")
+
+    м = (к / "01-AION-MASTER.md").read_text(encoding="utf-8")
+    п05 = (к / "05-CURRENT-STATE.md").read_text(encoding="utf-8")
+    п06 = (к / "06-PROGRESS-LEDGER.md").read_text(encoding="utf-8")
+    v01 = next((с.split("=", 1)[1].strip() for с in м.splitlines()[:12]
+                if с.startswith("VERSION")), None)
+    v05 = первое(п05, "MASTER_VERSION")
+    if v01 and v05:
+        итог("документы", "версия Мастера: 05 = 01", v01 == v05,
+             конфликт("версия", "05-CURRENT-STATE.md", v05, "01-AION-MASTER.md", v01) if v01 != v05 else "")
+    else:
+        итог("документы", "версия Мастера: 05 = 01", None, "не удалось прочесть")
+    e05 = первое(п05, "LAST_EVENT_ID")
+    e06 = next((с[4:].strip() for с in reversed(п06.splitlines()) if с.startswith("### E-")), None)
+    if e05 and e06:
+        итог("документы", "последнее событие: 05 = 06", e05 == e06,
+             конфликт("событие", "05-CURRENT-STATE.md", e05, "06-PROGRESS-LEDGER.md", e06) if e05 != e06 else "")
+    else:
+        итог("документы", "последнее событие: 05 = 06", None, "не удалось прочесть")
+
+    # ---- git: канон без хвостов ----
+    if для_публикации:
+        строка("  [SKIP   ] git: область sync — чинится самой публикацией")
+    else:
+        к_, в = зов("git", "-C", str(к), "status", "--porcelain", "--", "0*.md")
+        итог("git", "канон 0*.md без незакоммиченных правок", в == "", в[:80])
+        к_, в = зов("git", "-C", str(к), "status", "-sb")
+        шапка = (в.splitlines() or [""])[0]
+        итог("git", "ветка не впереди сервера", "ahead" not in шапка, шапка)
+
+    # ---- желаемое: процессы, runtime, полёт ----
+    путь_ж = к / "state" / "zhelaemoe.json"
+    try:
+        ж = json.loads(путь_ж.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as ошибка:
+        итог("желаемое", "state/zhelaemoe.json читается", None, str(ошибка)[:80])
+        ж = {}
+
+    for п in (ж.get("процессы") or {}).get("обязательные") or []:
+        имя, образец = п.get("имя", "?"), п.get("образец") or "?"
+        к_, в = зов("pgrep", "-f", образец)
+        живые = [x for x in в.split() if x.isdigit()]
+        итог("процессы", f"{имя} ({образец})", bool(живые), "не запущен")
+    if not ((ж.get("процессы") or {}).get("обязательные")):
+        строка("  [OK     ] процессы: обязательных не объявлено")
+
+    хочу = (ж.get("runtime") or {}).get("python")
+    есть = f"{sys.version_info.major}.{sys.version_info.minor}"
+    if хочу:
+        итог("runtime", f"python {есть}", есть == str(хочу),
+             f"желаемый {хочу}" if есть != str(хочу) else "")
+    for инстр in (ж.get("runtime") or {}).get("инструменты") or []:
+        к_, в = зов("/bin/sh", "-c", f"command -v {инстр}")
+        итог("runtime", f"инструмент {инстр}", к_ == 0, "не найден")
+
+    с = json.loads((к / "checklist" / "sostoyanie.json").read_text(encoding="utf-8"))
+    макс = int((ж.get("в_полёте") or {}).get("max_active", 1))
+    в_работе = [и for и, п in с["пункты"].items() if п["state"] in ("ACTIVE", "PASS_CANDIDATE")]
+    итог("в полёте", f"в работе не больше {макс}", len(в_работе) <= макс,
+         f"в работе {len(в_работе)}: {', '.join(в_работе)}")
+    активный = с.get("active")
+    согласовано = ((активный in в_работе) if активный else not в_работе)
+    итог("в полёте", "поле active согласовано с пунктами", согласовано,
+         f"active={активный}, а в работе {в_работе or 'никого'}")
+
+    строка("")
+    if предупреждения:
+        строка(f"ПРЕДУПРЕЖДЕНИЙ: {len(предупреждения)} (не блокируют, но требуют внимания)")
+    if беды:
+        строка(f"ИТОГ: DRIFT — расхождений {len(беды)}, публикация закрыта:")
+        for б in беды:
+            строка(f"  - {б}")
+        return 1
+    строка("ИТОГ: сходится — публикация разрешена")
+    return 0
+
+
+def маршруты(к):
+    """Прочесть routes.json. Испорченная карта — ошибка, а не пустая карта."""
+    путь = к / "routes.json"
+    if not путь.is_file():
+        return None, f"нет карты маршрутов: {путь}"
+    try:
+        карта = json.loads(путь.read_text(encoding="utf-8"))
+    except ValueError as е:
+        return None, f"карта маршрутов не читается: {е}"
+    if not isinstance(карта.get("маршруты"), dict):
+        return None, "в карте нет раздела «маршруты»"
+    return карта, ""
+
+
+def пакет(к, задача, карта):
+    """Собрать пакет под задачу. Точное имя, иначе ROUTE_NOT_FOUND.
+
+    Нарочно нет ни поиска по подстроке, ни исправления опечаток, ни
+    «ближайшего» маршрута: любое из этого и есть выдумка.
+    """
+    маршрут = карта["маршруты"].get(задача)
+    if маршрут is None or задача == "":
+        return None, ROUTE_NOT_FOUND
+    файлы = маршрут.get("файлы")
+    if not isinstance(файлы, list) or not файлы:
+        return None, f"маршрут «{задача}» пуст — это ошибка карты"
+    состав, пропало = [], []
+    for имя in файлы:
+        if any(з in имя for з in ("*", "?", "..")) or имя.startswith("/"):
+            return None, f"маршрут «{задача}» содержит маску или путь наружу: {имя}"
+        путь = к / имя
+        if not путь.is_file():
+            пропало.append(имя)
+            continue
+        данные = путь.read_bytes()
+        состав.append({"файл": имя, "байт": len(данные),
+                       "sha256": hashlib.sha256(данные).hexdigest()})
+    if пропало:
+        # Пакет не укорачивается молча: пропавший файл — беда маршрута.
+        return None, f"маршрут «{задача}» указывает на отсутствующее: {', '.join(пропало)}"
+    return {"задача": задача, "зачем": маршрут.get("зачем", ""),
+            "файлов": len(состав), "байт_всего": sum(ф["байт"] for ф in состав),
+            "состав": состав}, ""
+
+
+def context(к, дов):
+    задача = дов[0] if дов else ""
+    показать = "--cat" in дов
+    карта, беда = маршруты(к)
+    if not карта:
+        строка(f"STOP: {беда}")
+        return 1
+    п, беда = пакет(к, задача, карта)
+    if п is None:
+        строка(беда)
+        return 2 if беда == ROUTE_NOT_FOUND else 1
+    строка(json.dumps(п, ensure_ascii=False, indent=2))
+    if показать:
+        for ф in п["состав"]:
+            строка(f"\n===== {ф['файл']} =====")
+            строка((к / ф["файл"]).read_text(encoding="utf-8", errors="replace"))
+    return 0
+
+
+def routes(к, дов):
+    карта, беда = маршруты(к)
+    if not карта:
+        строка(f"STOP: {беда}")
+        return 1
+    for имя, м in карта["маршруты"].items():
+        строка(f"{имя:10} {len(м.get('файлы', []))} файл(ов)  — {м.get('зачем', '')}")
+    return 0
+
+
+ПОЛЯ_ОРИЕНТАЦИИ = ["WHO", "WHERE", "GOAL", "CHANGE", "TASK", "LAST_PROVEN",
+                   "STABLE", "CANDIDATE", "BLOCKERS", "NEXT"]
+
+
+def ориентация(к):
+    """Десять полей с источниками. Ничего из памяти: только диск."""
+    тек = json.loads((к / "state" / "current.json").read_text(encoding="utf-8"))
+    с = json.loads((к / "checklist" / "sostoyanie.json").read_text(encoding="utf-8"))
+    ист05 = f"state/current.json ← 05-CURRENT-STATE.md ({тек['source']['updated_at']})"
+    не_изм = set(тек.get("needs_measurement") or [])
+
+    def из05(ключ):
+        v = тек.get(ключ)
+        if v is None and ключ in не_изм:
+            return f"НЕ ИЗМЕРЕНО (05: needs_measurement)", f"{ист05} → {ключ}"
+        return (v if v is not None else "—"), f"{ист05} → {ключ}"
+
+    done = [и for и, п in с["пункты"].items() if п["state"] == "DONE"]
+    активный = с.get("active")
+    к_, доска = зов(sys.executable, str(к / "checklist" / "vorota.py"), "status")
+    к_, след = зов(sys.executable, str(к / "checklist" / "vorota.py"), "next-ready")
+    последний_done = None
+    for стр in (к / "checklist" / "letopis.ndjson").read_text(encoding="utf-8").splitlines():
+        if стр.strip():
+            з = json.loads(стр)
+            if з.get("вид") == "DONE":
+                последний_done = з["item"]
+    поля = {}
+    поля["WHO"] = из05("current_product")
+    ф, и = из05("current_phase")
+    поля["WHERE"] = (f"{ф}; доска: {доска.splitlines()[0]}", f"{и}; checklist/sostoyanie.json")
+    ф, и = из05("current_goal")
+    поля["GOAL"] = (f"{ф}; рабочая цель: пройти {len(с['пункты'])} пунктов Мастера, DONE {len(done)}",
+                    f"{и}; checklist/opredelenie.json (порядок), 00-START-HERE.md")
+    поля["CHANGE"] = из05("current_change")
+    ф, и = из05("current_task")
+    поля["TASK"] = (f"по 05: {ф}; по доске: ACTIVE {активный or '—'}", f"{и}; checklist/sostoyanie.json → active")
+    ф, и = из05("last_checkpoint")
+    поля["LAST_PROVEN"] = (f"по 05: {ф}; по воротам: последний DONE {последний_done or '—'}",
+                           f"{и}; checklist/letopis.ndjson (вид=DONE)")
+    поля["STABLE"] = из05("stable_reference")
+    поля["CANDIDATE"] = из05("candidate_reference")
+    ф, и = из05("blockers")
+    поля["BLOCKERS"] = ("; ".join(ф) if isinstance(ф, list) else str(ф), и)
+    ф, и = из05("next_authorized_step")
+    поля["NEXT"] = (f"по 05: {ф}; по воротам: {(след if след.startswith('N-') else 'сперва закончить ' + str(активный))}",
+                    f"{и}; checklist/vorota.py next-ready")
+    return {п: {"значение": str(поля[п][0]), "источник": поля[п][1]} for п in ПОЛЯ_ОРИЕНТАЦИИ}
+
+
+def orient(к, дов=()):
+    о = ориентация(к)
+    if "--json" in дов:
+        print(json.dumps(о, ensure_ascii=False, indent=1))
+        return 0
+    строка("=== ОРИЕНТАЦИЯ: десять полей, каждое с источником (L0.9 / L0.10) ===")
+    for п in ПОЛЯ_ОРИЕНТАЦИИ:
+        строка(f"{п}: {о[п]['значение']}")
+        строка(f"    источник: {о[п]['источник']}")
+    return 0
+
+
+УСЛОВИЯ_ВОРОТ = ["boot != PASS", "state invalid", "DOCUMENT_CONFLICT", "Stable protected",
+                 "Change unknown", "UNKNOWN по критической проверке", "сигнатура провала"]
+ЗАЩИЩЁННОЕ = ("zolotaya-kopiya", "01-AION-MASTER.md", "stable/")
+КРИТИЧЕСКИЕ_ПОЛЯ = ("current_phase", "current_task", "next_authorized_step")   # current_change — отдельное условие 5
+
+
+def gate(к, дов=()):
+    """Семь условий запрета. Ворота закрыты по умолчанию: ALLOW только когда все семь чисты.
+
+    Любое исключение по дороге — тоже BLOCKED (fail-closed), никогда не ALLOW.
+    """
+    действие = " ".join(дов).strip()
+    итоги = {}          # условие -> None (чисто) | строка-причина
+    try:
+        if not действие:
+            raise ValueError("действие не названо")
+        # 1. boot != PASS: корень, 00, машинное зеркало читаются
+        беды = [имя for имя in ("00-START-HERE.md", "05-CURRENT-STATE.md", "state/current.json") if not (к / имя).exists()]
+        try:
+            тек = json.loads((к / "state" / "current.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as ошибка:
+            тек = None
+            беды.append(f"state/current.json не читается: {str(ошибка)[:60]}")
+        итоги["boot != PASS"] = ("нет: " + ", ".join(беды)) if беды else None
+        # 2. state invalid: схема и статус
+        if тек is None:
+            итоги["state invalid"] = "зеркало недоступно"
+        else:
+            к_, в = зов(sys.executable, str(к / "state" / "sostoyanie.py"), "--proverit")
+            плохо = []
+            if к_ != 0:
+                плохо.append("зеркало ≠ 05 или схема нарушена: " + (в.splitlines()[-1][:80] if в else ""))
+            if тек.get("state_status") != "CANONICAL":
+                плохо.append(f"state_status = {тек.get('state_status')}")
+            итоги["state invalid"] = "; ".join(плохо) or None
+        # 3. DOCUMENT_CONFLICT: 05 = 01 по версии, 05 = 06 по событию
+        м = (к / "01-AION-MASTER.md").read_text(encoding="utf-8")
+        п05 = (к / "05-CURRENT-STATE.md").read_text(encoding="utf-8")
+        п06 = (к / "06-PROGRESS-LEDGER.md").read_text(encoding="utf-8")
+        v01 = next((с.split("=", 1)[1].strip() for с in м.splitlines()[:12] if с.startswith("VERSION")), None)
+        v05 = next((с.split("=", 1)[1].split("(")[0].strip() for с in п05.splitlines() if с.strip().startswith("MASTER_VERSION")), None)
+        e05 = next((с.split("=", 1)[1].split("(")[0].strip() for с in п05.splitlines() if с.strip().startswith("LAST_EVENT_ID")), None)
+        e06 = next((с[4:].strip() for с in reversed(п06.splitlines()) if с.startswith("### E-")), None)
+        конфликты = []
+        if not (v01 and v05 and e05 and e06):
+            конфликты.append("версия или событие не читаются")
+        else:
+            if v01 != v05: конфликты.append(f"MASTER_VERSION 05={v05} ≠ 01={v01}")
+            if e05 != e06: конфликты.append(f"LAST_EVENT_ID 05={e05} ≠ 06={e06}")
+        итоги["DOCUMENT_CONFLICT"] = "; ".join(конфликты) or None
+        # 4. Stable protected: действие трогает защищённое
+        задето = [з for з in ЗАЩИЩЁННОЕ if з.lower() in действие.lower()]
+        стаб = (тек or {}).get("stable_reference")
+        if стаб and str(стаб).lower() in действие.lower():
+            задето.append(str(стаб))
+        итоги["Stable protected"] = ("действие трогает " + ", ".join(задето)) if задето else None
+        # 5. Change unknown: текущее изменение названо
+        изм = (тек or {}).get("current_change")
+        итоги["Change unknown"] = None if (изм and "UNKNOWN" not in str(изм).upper()) else f"current_change = {изм}"
+        # 6. UNKNOWN по критической проверке
+        неизвестно = [ф for ф in КРИТИЧЕСКИЕ_ПОЛЯ if not (тек or {}).get(ф) or "UNKNOWN" in str((тек or {}).get(ф)).upper()]
+        итоги["UNKNOWN по критической проверке"] = ("не измерено/UNKNOWN: " + ", ".join(неизвестно)) if неизвестно else None
+        # 7. сигнатура провала — и семейство в диагностике (L2.8): после третьего повтора заплатки запрещены
+        к_, в = зов(sys.executable, str(к / "bin" / "proverka-otkazov.py"), действие)
+        итоги["сигнатура провала"] = (в.splitlines()[0].strip() if к_ == 3 else f"проверка не состоялась (код {к_})") if к_ != 0 else None
+        путь_сем = к / "registries" / "semeystva.jsonl"
+        if итоги["сигнатура провала"] is None and путь_сем.exists():
+            for стр in путь_сем.read_text(encoding="utf-8").splitlines():
+                if not стр.strip():
+                    continue
+                сем = json.loads(стр)
+                if сем.get("STATE") == "DIAGNOSIS_REQUIRED" and сем["FAMILY"].lower() in действие.lower():
+                    итоги["сигнатура провала"] = (f"семейство {сем['FAMILY']} в диагностике: повторов {сем['COUNT']} ≥ {сем['THRESHOLD']}, "
+                                                  f"заплатки запрещены до записанной гипотезы (semeystva.py gipoteza)")
+                    break
+    except Exception as ошибка:  # noqa: BLE001 — любая ошибка проверки закрывает ворота
+        for у in УСЛОВИЯ_ВОРОТ:
+            итоги.setdefault(у, None)
+        итоги["ошибка проверки"] = f"{type(ошибка).__name__}: {str(ошибка)[:100]}"
+    строка(f"=== ВОРОТА ИЗМЕНЕНИЯ (gate) · действие: {действие or '—'} ===")
+    сработали = []
+    for у in УСЛОВИЯ_ВОРОТ + [x for x in итоги if x not in УСЛОВИЯ_ВОРОТ]:
+        причина = итоги.get(у)
+        строка(f"  [{'BLOCK' if причина else 'ok   '}] {у}" + (f"  — {причина}" if причина else ""))
+        if причина:
+            сработали.append(у)
+    строка("")
+    if сработали:
+        строка(f"GATE: BLOCKED — {len(сработали)} из 7: " + "; ".join(сработали))
+        return 3
+    строка("GATE: ALLOW — все 7 условий чисты, состояние подтверждено")
+    return 0
+
+
+def laws(к, дов=()):
+    """Классификация принуждения законов §32 (L0.12 / P0-08).
+
+    Полнота проверяется против самого Мастера: §32 разбирается заново, и любой
+    закон, которого нет в laws.json (или лишний в нём), — ошибка, код 1.
+    Доля PROMPT_ONLY считается по факту и печатается вместе с именами.
+    """
+    м = (к / "01-AION-MASTER.md").read_text(encoding="utf-8")
+    try:
+        нач = м.index("# 32. FINAL LAWS")
+        кон = м.index("# 33.", нач)
+    except ValueError:
+        строка("STOP: в 01-AION-MASTER.md нет §32 FINAL LAWS")
+        return 1
+    в_мастере = [с.strip() for с in м[нач:кон].splitlines()[1:]
+                 if с.strip() and not с.startswith("---")]
+    try:
+        л = json.loads((к / "laws.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError) as ошибка:
+        строка(f"STOP: laws.json не читается: {ошибка}")
+        return 1
+    в_json = [з["закон"] for з in л["законы"]]
+    классы = set(л["классы"])
+    беды = []
+    for з in в_мастере:
+        if з not in в_json:
+            беды.append(f"в §32 есть, в laws.json нет: {з}")
+    for з in в_json:
+        if з not in в_мастере:
+            беды.append(f"в laws.json есть, в §32 нет: {з}")
+    for з in л["законы"]:
+        if з.get("класс") not in классы:
+            беды.append(f"закон {з.get('№')}: класс «{з.get('класс')}» не из списка классов")
+        if not з.get("механизм"):
+            беды.append(f"закон {з.get('№')}: механизм не указан (для PROMPT_ONLY пишется «—»)")
+    строка("=== ЗАКОНЫ §32: КЛАСС ПРИНУЖДЕНИЯ ===")
+    строка(f"в Мастере: {len(в_мастере)}   в laws.json: {len(в_json)}   "
+           f"полнота: {'ПОЛНЫЙ' if not беды else 'НЕ ПОЛНЫЙ'}")
+    строка("")
+    for з in л["законы"]:
+        строка(f"  {з['№']:>2}. [{з['класс']:<11}] {з['закон']}")
+        строка(f"      механизм: {з['механизм']}")
+        if з.get("замечание"):
+            строка(f"      честно:   {з['замечание']}")
+    по_классам = {}
+    for з in л["законы"]:
+        по_классам[з["класс"]] = по_классам.get(з["класс"], 0) + 1
+    строка("")
+    строка("по классам: " + ", ".join(f"{k} {v}" for k, v in sorted(по_классам.items(), key=lambda x: -x[1])))
+    только_слова = [з for з in л["законы"] if з["класс"] == "PROMPT_ONLY"]
+    всего = len(л["законы"])
+    строка(f"PROMPT_ONLY — только слова, на диске не принуждаются: "
+           f"{len(только_слова)} из {всего} = {len(только_слова) / всего * 100:.1f}%")
+    for з in только_слова:
+        строка(f"  · {з['№']:>2}. {з['закон']}")
+    if беды:
+        строка("")
+        строка("ОШИБКИ:")
+        for б in беды:
+            строка(f"  - {б}")
+        return 1
+    return 0
+
+
+def главное(дов):
+    команды = ("bootstrap", "resume", "reconcile", "context", "routes", "laws", "orient", "gate")
+    if not дов or дов[0] not in команды:
+        print(__doc__)
+        return 2
+    к, беда = корень()
+    if not к:
+        print(f"STOP: {беда}")
+        return 1
+    if дов[0] == "context":
+        return context(к, дов[1:])
+    if дов[0] == "routes":
+        return routes(к, дов[1:])
+    if дов[0] == "reconcile":
+        return reconcile(к, дов[1:])
+    if дов[0] == "laws":
+        return laws(к, дов[1:])
+    if дов[0] == "orient":
+        return orient(к, дов[1:])
+    if дов[0] == "gate":
+        return gate(к, дов[1:])
+    return {"bootstrap": bootstrap, "resume": resume}[дов[0]](к)
+
+
+if __name__ == "__main__":
+    sys.exit(главное(sys.argv[1:]))

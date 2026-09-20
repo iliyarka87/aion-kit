@@ -1,0 +1,117 @@
+{
+ "источник": "/private/tmp/claude-502/-Users-iliar/b572851d-fff5-4529-a16d-f633b2004a0d/scratchpad/aion-kit-153728/aion-checklist/examples/example-checklist.md",
+ "источник_sha256": "17e2c9d3d3bcf52da2c1fa70f6537d4712a66863af3e39f443ca756745691b05",
+ "пунктов": 6,
+ "порядок": [
+  "N-L0-00",
+  "N-L0-01",
+  "N-L0-02",
+  "N-L0-05",
+  "N-L1-01",
+  "N-COMPLETE-01"
+ ],
+ "пункты": {
+  "N-L0-00": {
+   "id": "N-L0-00",
+   "имя": "Сверка канона с реальностью",
+   "class": "MIGRATION_ITEM",
+   "implementation_mode": "VERIFY",
+   "task_state": "PLANNED",
+   "level": "L0",
+   "depends": [],
+   "risk": "RED",
+   "required_evidence": "вывод сверки",
+   "acceptance": "каждое расхождение исправлено или помечено",
+   "independent_review": "ТРЕБУЕТСЯ: отдельная личность, не Builder",
+   "objective": "документы = диску",
+   "spravochnyy_srok_min": 90
+  },
+  "N-L0-01": {
+   "id": "N-L0-01",
+   "имя": "Машинное зеркало состояния",
+   "class": "BUILD_ITEM",
+   "implementation_mode": "BUILD",
+   "task_state": "PLANNED",
+   "level": "L0",
+   "depends": [
+    "N-L0-00"
+   ],
+   "risk": "GREEN",
+   "required_evidence": "state/current.json",
+   "acceptance": "зеркало = документу",
+   "independent_review": "НЕ ТРЕБУЕТСЯ (GREEN): достаточно автоматической проверки",
+   "objective": "состояние читается машиной",
+   "spravochnyy_srok_min": 20
+  },
+  "N-L0-02": {
+   "id": "N-L0-02",
+   "имя": "Ворота чек-листа",
+   "class": "BUILD_ITEM",
+   "implementation_mode": "BUILD",
+   "task_state": "PLANNED",
+   "level": "L0",
+   "depends": [
+    "N-L0-01"
+   ],
+   "risk": "GREEN",
+   "required_evidence": "вывод проб ворот",
+   "acceptance": "один пункт в работе; DONE только с уликой",
+   "independent_review": "НЕ ТРЕБУЕТСЯ (GREEN): достаточно автоматической проверки",
+   "objective": "механический замок на чек-лист",
+   "spravochnyy_srok_min": 20
+  },
+  "N-L0-05": {
+   "id": "N-L0-05",
+   "имя": "Сверка перед публикацией",
+   "class": "BUILD_ITEM",
+   "implementation_mode": "BUILD",
+   "task_state": "PLANNED",
+   "level": "L0",
+   "depends": [
+    "N-L0-01",
+    "N-L0-02"
+   ],
+   "risk": "YELLOW",
+   "required_evidence": "вывод сверки",
+   "acceptance": "расхождение закрывает публикацию",
+   "independent_review": "НЕ ТРЕБУЕТСЯ (GREEN): достаточно автоматической проверки",
+   "objective": "reconcile перед каждым push",
+   "spravochnyy_srok_min": 45
+  },
+  "N-L1-01": {
+   "id": "N-L1-01",
+   "имя": "Связь Директор → исполнитель",
+   "class": "BUILD_ITEM",
+   "implementation_mode": "BUILD",
+   "task_state": "PLANNED",
+   "level": "L1",
+   "depends": [
+    "N-L0-05"
+   ],
+   "risk": "YELLOW",
+   "required_evidence": "журнал доставки",
+   "acceptance": "повтор доставки не запускает работу дважды",
+   "independent_review": "НЕ ТРЕБУЕТСЯ (GREEN): достаточно автоматической проверки",
+   "objective": "идемпотентная доставка по ключу",
+   "spravochnyy_srok_min": 45
+  },
+  "N-COMPLETE-01": {
+   "id": "N-COMPLETE-01",
+   "имя": "Завершение проекта",
+   "class": "MIGRATION_ITEM",
+   "implementation_mode": "VERIFY",
+   "task_state": "PLANNED",
+   "level": "COMPLETE",
+   "depends": [
+    "N-L1-01"
+   ],
+   "risk": "RED",
+   "required_evidence": "все улики",
+   "acceptance": "все пункты DONE",
+   "independent_review": "ТРЕБУЕТСЯ: владелец",
+   "objective": "PROJECT_COMPLETE",
+   "spravochnyy_srok_min": 90
+  }
+ },
+ "примечание": "Определение неизменно. Сроки — справочные: ворота по времени ничего не решают, владелец следит сам."
+}

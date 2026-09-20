@@ -1,0 +1,150 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "AION machine current state (Master L0.5)",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "current_phase",
+  "current_product",
+  "current_goal",
+  "current_change",
+  "current_task",
+  "last_completed_task",
+  "next_authorized_step",
+  "stable_reference",
+  "candidate_reference",
+  "dirty_state",
+  "last_test",
+  "last_test_result",
+  "blockers",
+  "owner_decisions",
+  "last_checkpoint",
+  "state_status",
+  "needs_measurement",
+  "source"
+ ],
+ "properties": {
+  "current_phase": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "current_product": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "current_goal": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "current_change": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "current_task": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "last_completed_task": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "next_authorized_step": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "stable_reference": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "candidate_reference": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "dirty_state": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "last_test": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "last_test_result": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "last_checkpoint": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "state_status": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "schema_version": {
+   "type": "string",
+   "const": "1"
+  },
+  "blockers": {
+   "type": [
+    "array",
+    "null"
+   ],
+   "items": {
+    "type": "string"
+   }
+  },
+  "owner_decisions": {
+   "type": [
+    "array",
+    "null"
+   ],
+   "items": {
+    "type": "string"
+   }
+  },
+  "needs_measurement": {
+   "type": "array",
+   "items": {
+    "type": "string"
+   }
+  },
+  "source": {
+   "type": "object",
+   "required": [
+    "file",
+    "sha256",
+    "updated_at",
+    "mapping"
+   ]
+  }
+ }
+}

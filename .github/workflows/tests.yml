@@ -1,0 +1,34 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: gate probes (aion-checklist) on a fresh board from the example checklist
+        run: cd aion-checklist && python3 sobrat.py && python3 proby.py
+      - name: gate probes (aion-loop/checklist)
+        run: cd aion-loop/checklist && python3 sobrat.py && python3 proby.py
+      - name: aion-loop kit integrity and self-contained probe suites
+        run: |
+          cd aion-loop
+          python3 proverit-komplekt.py || true   # judge venv is optional on CI; fingerprints must match
+          python3 proverit-komplekt.py | grep -q "бед: 0"
+          for s in "bin/markery.py --proby" "bin/dogovor_zadachi.py --proby" "bin/proby-dostavki.py" \
+                   "svyaz/src/mailqueue.py --proby" "svyaz/src/vosstanovlenie.py --proby" "bin/uliki.py --proby" \
+                   "bin/proverka-otkazov.py --proby" "bin/semeystva.py --proby" "bin/ochered.py check"; do
+            echo "== $s"; python3 $s | tail -3
+            python3 $s > /dev/null
+          done
+          python3 -m unittest discover -s svyaz/tests -q
+      - name: aion-socket tests
+        run: cd aion-socket && python3 -m unittest discover -s tests -q
+      - name: no personal paths or secrets slipped in
+        run: |
+          ! grep -rIE "/Users/[a-z]+/|sk-[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY" --exclude-dir=.git . 

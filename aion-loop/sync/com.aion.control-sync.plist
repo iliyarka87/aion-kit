@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- AION CONTROL SYNC V1 — isolated service, touches nothing else.
+         Entry point is python3 (not /bin/bash): macOS TCC blocks bash-from-launchd in ~/Desktop,
+         python3 already has Desktop access (see sync/launchd-runner.py).
+         Triggers: any change in the control folder (WatchPaths) + every 5 min (StartInterval)
+         + at login/boot (RunAtLoad). The script is idempotent: no change → NOOP. -->
+    <key>Label</key>
+    <string>com.aion.control-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string><AION_ROOT>/sync/launchd-runner.py</string>
+        <string>launchd</string>
+    </array>
+
+    <key>WatchPaths</key>
+    <array>
+        <string><AION_ROOT></string>
+        <string><AION_ROOT>/00-START-HERE.md</string>
+        <string><AION_ROOT>/01-AION-MASTER.md</string>
+        <string><AION_ROOT>/02-PRE-PHASE-00-FACTS.md</string>
+        <string><AION_ROOT>/03-HANDOFF.md</string>
+        <string><AION_ROOT>/04-LEGACY-FOUNDATIONS-TO-MERGE.md</string>
+        <string><AION_ROOT>/05-CURRENT-STATE.md</string>
+        <string><AION_ROOT>/06-PROGRESS-LEDGER.md</string>
+        <string><AION_ROOT>/07-AGENT-TRUST-AND-OPERATING-MODEL.md</string>
+    </array>
+
+    <key>StartInterval</key>
+    <integer>300</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string><HOME>/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string><HOME></string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string><AION_ROOT>/.sync/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string><AION_ROOT>/.sync/launchd.err.log</string>
+
+    <key>Nice</key>
+    <integer>5</integer>
+</dict>
+</plist>

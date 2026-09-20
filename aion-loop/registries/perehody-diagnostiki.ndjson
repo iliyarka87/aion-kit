@@ -1,0 +1,1 @@
+{"t": "2026-01-01T09:00:00+00:00", "family": "STATE_DRIFT", "count": 3, "threshold": 3, "reason": "third repeat of the family", "state": "DIAGNOSIS_REQUIRED", "diagnosis": "", "hypothesis": "", "rule": "patches are forbidden until a written hypothesis"}

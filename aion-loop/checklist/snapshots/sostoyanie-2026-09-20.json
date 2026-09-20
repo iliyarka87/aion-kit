@@ -1,0 +1,1100 @@
+{
+ "опр_sha256": "4ef9261d57487e270252e1f05851d83f6f1920520958ec47abb02831cb096fc0",
+ "active": "N-L2-07",
+ "max_active": 1,
+ "пункты": {
+  "N-L0-00": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-1b16ba50b885",
+     "n": 1,
+     "started_at": 1789830946.191,
+     "finished_at": 1789830976.843,
+     "elapsed_seconds": 30.7,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "05 diff: строка 158, commit 751606ca→bfd5ff91, blob сохранён",
+      "git cat-file -t 751606ca = blob; = hash-object 01-AION-MASTER.md",
+      "git cat-file -t bfd5ff91 = commit; VERSION на нём MASTER-2026-09-18-03; 01 не менялся с него",
+      "05 sha256 до ff43a207… после 3414c4e0…",
+      "D-3/D-4 не замерялись — остаются NEEDS_MEASUREMENT"
+     ],
+     "spravochnyy_srok_min": 90
+    }
+   ],
+   "evidence": [
+    "Директор: коммит 3c230f1b содержит одну строку правки 05",
+    "Директор: bfd5ff91 — коммит Мастера; blob 01 = 751606ca на HEAD и на bfd5ff91; VERSION MASTER-2026-09-18-03",
+    "независимая проверка Директора по GitHub 19.09.2026"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-01": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-be7170a0f711",
+     "n": 1,
+     "started_at": 1789833024.833,
+     "finished_at": 1789833077.721,
+     "elapsed_seconds": 52.9,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "прогон 1: из /tmp и /Users/Shared -> <AION_ROOT>, код 0",
+      "прогон 2: подложный AION_HOME без маркера и с фальшивым -> STOP, код 2",
+      "прогон 3: переименование на копии -> найден по маркеру до/после/возврат; копия убрана",
+      "резолвер sha256 13b5f001340ad5d2e39c57d07646b330f78c2010192fc63091ab9dd6157e9f72",
+      "diff: только .aion-root и bin/aion_root; канон не тронут",
+      "журнал приёмки /Users/Shared/aion-pesochnica/priyomka-n-l0-01.log"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "Директор: .aion-root содержит AION-ROOT-MARKER-v1",
+    "Директор: bin/aion_root проверяет маркер, отвергает подложный AION_HOME, ищет вверх от cwd; blob совпал с отчётом",
+    "Директор: коммит f4e193b3 содержит отчёт N-L0-01-A2.md",
+    "независимая проверка Директора по GitHub 19.09.2026"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-02": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-0490e4fe7f54",
+     "n": 1,
+     "started_at": 1789837316.244,
+     "finished_at": 1789837429.313,
+     "elapsed_seconds": 113.1,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "state/current.json: 11 из 17 полей L0.5 взяты из 05, 6 помечены needs_measurement, не выдуманы",
+      "state/schema.json: 17 полей + needs_measurement + source, additionalProperties=false",
+      "положительная проверка: сверка сошлась, код 0",
+      "отрицательная 1: подмена current_phase -> ПУБЛИКАЦИЯ ЗАКРЫТА, код 1",
+      "отрицательная 2: лишнее поле -> ПУБЛИКАЦИЯ ЗАКРЫТА, код 1",
+      "INV-STATE-001: один разборщик и на сборку, и на проверку; source.sha256 ловит устаревание",
+      "diff ограничен state/; канон 0 изменений"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "Директор: current.json содержит 17 полей L0.5 + needs_measurement + source; шесть незаполненных явно помечены",
+    "Директор: schema.json запрещает лишние поля",
+    "Директор: sostoyanie.py выводит и перепроверяет значения из 05, сверяет sha256, закрывает публикацию при расхождении",
+    "независимая проверка Директора по GitHub 19.09.2026"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-03": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-0fe6b1b56256",
+     "n": 1,
+     "started_at": 1789839022.866,
+     "finished_at": 1789839149.145,
+     "elapsed_seconds": 126.3,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "bin/aionctl: bootstrap / resume / reconcile — одна команда, крючков не требует",
+      "проба 1: bootstrap из /tmp без истории -> правило 00 + позиция из state/current.json (зеркало 05)",
+      "проба 2: resume в пустом окружении (env -i) из чужой папки -> ориентация + доска + последние 5 шагов летописи",
+      "проба 3: голый bash из /tmp, без Claude и крючков -> код 0; aionctl не упоминается ни в одном крючке",
+      "reconcile (L0.11): 7 сверок; поймал живой DRIFT (ветка впереди GitHub), после синхронизации сошлось",
+      "diff: только bin/aionctl; канон 0 изменений"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "Директор: aionctl реализует bootstrap/resume/reconcile; bootstrap читает 00 и машинное состояние из 05",
+    "Директор: resume добавляет доску и летопись; корень через bin/aion_root; команды без зависимости от крючков",
+    "Директор: reconcile сообщает DRIFT/UNKNOWN, не нормализует молча",
+    "независимая проверка Директора по GitHub 19.09.2026"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-04": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-43cdfaa76b6e",
+     "n": 1,
+     "started_at": 1789883494.369,
+     "finished_at": 1789883665.535,
+     "elapsed_seconds": 171.2,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L0-04/vyvod-komand.json",
+      "<AION_ROOT>/evidence/N-L0-04/razmery-paketov.json",
+      "<AION_ROOT>/evidence/N-L0-04/itog-prob.txt"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L0-04/vyvod-komand.json",
+    "<AION_ROOT>/evidence/N-L0-04/razmery-paketov.json",
+    "<AION_ROOT>/evidence/N-L0-04/itog-prob.txt",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-05": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-7fc6b28a2b5a",
+     "n": 1,
+     "started_at": 1789893041.95,
+     "finished_at": 1789894039.409,
+     "elapsed_seconds": 997.5,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L0-05/vyvod-reconcile.txt",
+      "<AION_ROOT>/evidence/N-L0-05/stroka-zhurnala-sinhrona.txt",
+      "reconcile: пять областей (документы, git, процессы, runtime, в полёте) сверяются с state/zhelaemoe.json и документами; 7 проб из 7: пять искусственных расхождений пойманы и названы по области, чистая копия сходится, песочная публикация остановлена на validate строкой RESULT=VALIDATION_FAILED RECONCILE_DRIFT; живой синхрон с reconcile внутри validate — RESULT=PASS"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L0-05/vyvod-reconcile.txt",
+    "<AION_ROOT>/evidence/N-L0-05/stroka-zhurnala-sinhrona.txt",
+    "reconcile: пять областей (документы, git, процессы, runtime, в полёте) сверяются с state/zhelaemoe.json и документами; 7 проб из 7: пять искусственных расхождений пойманы и названы по области, чистая копия сходится, песочная публикация остановлена на validate строкой RESULT=VALIDATION_FAILED RECONCILE_DRIFT; живой синхрон с reconcile внутри validate — RESULT=PASS",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-06": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-23dd39f4d2d2",
+     "n": 1,
+     "started_at": 1789894078.433,
+     "finished_at": 1789894478.522,
+     "elapsed_seconds": 400.1,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/registries/failures.jsonl",
+      "<AION_ROOT>/evidence/N-L0-06/vyvod-proverki.txt",
+      "registries/failures.jsonl: 51 запись ровно по 17 полям §5 (21 строка REPORT-14 из 02 + 30 происшествий из aion/knowledge), импорт без потери — 338 исходных ячеек найдены дословно; сборка детерминированна (sobrat-otkazy.py --sverka: сходится); proverka-otkazov.py: известная сигнатура → BLOCKED с именем отказа и безопасной заменой (код 3), неизвестная → PASS (код 0); пробы 5 из 5"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/registries/failures.jsonl",
+    "<AION_ROOT>/evidence/N-L0-06/vyvod-proverki.txt",
+    "registries/failures.jsonl: 51 запись ровно по 17 полям §5 (21 строка REPORT-14 из 02 + 30 происшествий из aion/knowledge), импорт без потери — 338 исходных ячеек найдены дословно; сборка детерминированна (sobrat-otkazy.py --sverka: сходится); proverka-otkazov.py: известная сигнатура → BLOCKED с именем отказа и безопасной заменой (код 3), неизвестная → PASS (код 0); пробы 5 из 5",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-07": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-bf180262571f",
+     "n": 1,
+     "started_at": 1789894510.523,
+     "finished_at": 1789894789.703,
+     "elapsed_seconds": 279.2,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/authority.json",
+      "<AION_ROOT>/evidence/N-L0-07/vyvod-reconcile.txt",
+      "authority.json: 12 документов с уровнем; AUTHORITY_LEVEL в шапке каждого; конфликт решён по уровню (перевёрнутые уровни меняют победителя при том же порядке чтения); без уровня — WARN; пробы 4/4, регрессия N-L0-05 7/7"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/authority.json",
+    "<AION_ROOT>/evidence/N-L0-07/vyvod-reconcile.txt",
+    "authority.json: 12 документов с уровнем; AUTHORITY_LEVEL в шапке каждого; конфликт решён по уровню (перевёрнутые уровни меняют победителя при том же порядке чтения); без уровня — WARN; пробы 4/4, регрессия N-L0-05 7/7",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-08": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-947430105304",
+     "n": 1,
+     "started_at": 1789894822.489,
+     "finished_at": 1789894978.656,
+     "elapsed_seconds": 156.2,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/laws.json",
+      "<AION_ROOT>/evidence/N-L0-08/vyvod-laws.txt",
+      "laws.json: все 29 законов §32 дословно, у каждого класс (из 6) и механизм; aionctl laws сверяет полноту с §32 Мастера (проба: убранный закон назван, код 1); PROMPT_ONLY 14 из 29 = 48.3%, названы поимённо; расчёт доли повторён независимо"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/laws.json",
+    "<AION_ROOT>/evidence/N-L0-08/vyvod-laws.txt",
+    "laws.json: все 29 законов §32 дословно, у каждого класс (из 6) и механизм; aionctl laws сверяет полноту с §32 Мастера (проба: убранный закон назван, код 1); PROMPT_ONLY 14 из 29 = 48.3%, названы поимённо; расчёт доли повторён независимо",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-09": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-e95c2a7d476b",
+     "n": 1,
+     "started_at": 1789895016.286,
+     "finished_at": 1789895154.342,
+     "elapsed_seconds": 138.1,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/index.jsonl",
+      "<AION_ROOT>/evidence/N-L0-09/vyvod-proverki.txt",
+      "evidence/index.jsonl: 11 улик с классом по 07 §9 и sha256; bin/uliki.py proverit — подделанный файл даёт MISMATCH (код 1), удалённый — MISSING; sobytiya — событие 06 без ссылки на доказательство даёт предупреждение (проба E-PROBA); живой канон: целостность подтверждена, 28 событий и 9 зачётов с уликами; пробы 4 из 4"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/index.jsonl",
+    "<AION_ROOT>/evidence/N-L0-09/vyvod-proverki.txt",
+    "evidence/index.jsonl: 11 улик с классом по 07 §9 и sha256; bin/uliki.py proverit — подделанный файл даёт MISMATCH (код 1), удалённый — MISSING; sobytiya — событие 06 без ссылки на доказательство даёт предупреждение (проба E-PROBA); живой канон: целостность подтверждена, 28 событий и 9 зачётов с уликами; пробы 4 из 4",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-10": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-ea46b5fdd402",
+     "n": 1,
+     "started_at": 1789895191.474,
+     "finished_at": 1789895404.286,
+     "elapsed_seconds": 212.8,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L0-10/transkript-svezhaya-sessiya.txt",
+      "<AION_ROOT>/evidence/N-L0-10/transkript-posle-szhatiya.txt",
+      "<AION_ROOT>/evidence/N-L0-10/sravnenie-do-posle.md",
+      "aionctl orient: 10 полей WHO…NEXT, каждое с источником на диске; два настоящих сценария отдельными сессиями claude -p: свежая и после сжатия (со стухшей сводкой в памяти) — обе назвали все 10 полей с источниками, совпадение с диском 10/10, потеря 0; после сжатия сессия сама назвала 6 расхождений сводки с диском и признала диск главнее"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L0-10/transkript-svezhaya-sessiya.txt",
+    "<AION_ROOT>/evidence/N-L0-10/transkript-posle-szhatiya.txt",
+    "<AION_ROOT>/evidence/N-L0-10/sravnenie-do-posle.md",
+    "aionctl orient: 10 полей WHO…NEXT, каждое с источником на диске; два настоящих сценария отдельными сессиями claude -p: свежая и после сжатия (со стухшей сводкой в памяти) — обе назвали все 10 полей с источниками, совпадение с диском 10/10, потеря 0; после сжатия сессия сама назвала 6 расхождений сводки с диском и признала диск главнее",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-11": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-474d180247a8",
+     "n": 1,
+     "started_at": 1789895444.274,
+     "finished_at": 1789895709.194,
+     "elapsed_seconds": 264.9,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/registries/decisions.jsonl",
+      "<AION_ROOT>/registries/incidents.jsonl",
+      "<AION_ROOT>/registries/patterns.jsonl",
+      "<AION_ROOT>/registries/methods.jsonl",
+      "<AION_ROOT>/registries/company.jsonl",
+      "<AION_ROOT>/registries/product-manifest.jsonl",
+      "<AION_ROOT>/registries/ai-exchange-ledger.jsonl",
+      "<AION_ROOT>/evidence/N-L0-11/vyvod-sborki.txt",
+      "шесть реестров L0.6 + AI_EXCHANGE_LEDGER (39 записей ровно по 13 полям §23) собраны детерминированно с диска (bin/sobrat-reestry.py, --sverka сходится); каждый обмен перевозки (27: DISPATCHED, VERDICT, REPORT) имеет запись в журнале обмена — сверка ДА; проба: без записи журнала сверка даёт НЕТ и называет обмен"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/registries/decisions.jsonl",
+    "<AION_ROOT>/registries/incidents.jsonl",
+    "<AION_ROOT>/registries/patterns.jsonl",
+    "<AION_ROOT>/registries/methods.jsonl",
+    "<AION_ROOT>/registries/company.jsonl",
+    "<AION_ROOT>/registries/product-manifest.jsonl",
+    "<AION_ROOT>/registries/ai-exchange-ledger.jsonl",
+    "<AION_ROOT>/evidence/N-L0-11/vyvod-sborki.txt",
+    "шесть реестров L0.6 + AI_EXCHANGE_LEDGER (39 записей ровно по 13 полям §23) собраны детерминированно с диска (bin/sobrat-reestry.py, --sverka сходится); каждый обмен перевозки (27: DISPATCHED, VERDICT, REPORT) имеет запись в журнале обмена — сверка ДА; проба: без записи журнала сверка даёт НЕТ и называет обмен",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L0-12": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-827c6c69909d",
+     "n": 1,
+     "started_at": 1789895758.828,
+     "finished_at": 1789895877.128,
+     "elapsed_seconds": 118.3,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/registries/owner-decision-queue.jsonl",
+      "<AION_ROOT>/evidence/N-L0-12/vyvod-ocheredi.txt",
+      "очередь решений владельца по 11 полям §20 (bin/ochered.py): 7 записей — 6 ожидают, 1 заполненный пример с ответом владельца (OD-001, сторож); у каждой рекомендация, безопасное действие по умолчанию, что можно продолжать; check: заперто 2 пункта L5, 7 готовых идут без владельца; запрос только записывается — прогон с закрытым stdin, окно не открывается; факт ночи: при 6 ожидающих решениях доска шла 5 → 12"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/registries/owner-decision-queue.jsonl",
+    "<AION_ROOT>/evidence/N-L0-12/vyvod-ocheredi.txt",
+    "очередь решений владельца по 11 полям §20 (bin/ochered.py): 7 записей — 6 ожидают, 1 заполненный пример с ответом владельца (OD-001, сторож); у каждой рекомендация, безопасное действие по умолчанию, что можно продолжать; check: заперто 2 пункта L5, 7 готовых идут без владельца; запрос только записывается — прогон с закрытым stdin, окно не открывается; факт ночи: при 6 ожидающих решениях доска шла 5 → 12",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-01": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-822013160111",
+     "n": 1,
+     "started_at": 1789895912.446,
+     "finished_at": 1789896043.919,
+     "elapsed_seconds": 131.5,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-01/priyomka-osnovy.txt",
+      "<AION_ROOT>/05-CURRENT-STATE.md",
+      "<HOME>/Desktop/Projects/aion/tools/director/proverka_kanala.py",
+      "основа принята без повторной стройки (0 изменённых файлов в CHATGPT-DIRECTOR): 05 DIRECTOR_CHANNEL = PROVEN по 8 задачам 16–17.09 (E-0026, TASK.json на origin/main, 84 расписки в results/); независимый прогон proverka_kanala.py сейчас по 17 расписками 16–17.09 — 14 полных цепей, три названы с изъяном звена 6 (расписка моста ≠ маркер) — тот самый, ради которого власть расписки отдана исполнителю; преемник — svyaz, отдельная линия по решению владельца"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-01/priyomka-osnovy.txt",
+    "<AION_ROOT>/05-CURRENT-STATE.md",
+    "<HOME>/Desktop/Projects/aion/tools/director/proverka_kanala.py",
+    "основа принята без повторной стройки (0 изменённых файлов в CHATGPT-DIRECTOR): 05 DIRECTOR_CHANNEL = PROVEN по 8 задачам 16–17.09 (E-0026, TASK.json на origin/main, 84 расписки в results/); независимый прогон proverka_kanala.py сейчас по 17 расписками 16–17.09 — 14 полных цепей, три названы с изъяном звена 6 (расписка моста ≠ маркер) — тот самый, ради которого власть расписки отдана исполнителю; преемник — svyaz, отдельная линия по решению владельца",
+    "director verdict: PASS (2 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-02": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-108900c17bc4",
+     "n": 1,
+     "started_at": 1789896092.091,
+     "finished_at": 1789896573.015,
+     "elapsed_seconds": 480.9,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-02/HANDOFF.jsonl",
+      "<AION_ROOT>/evidence/N-L1-02/director-otkazy.json",
+      "<AION_ROOT>/evidence/N-L1-02/vyvod-prob.txt",
+      "vyvod-prob.txt показывает вывод каждой из 7 проб: что вернул договор (поля acceptance, trace, reason) и число записей TASK_REJECTED после шага; 50 кругов дали 50 раз след «уже был» при одной записи; исправленная задача принята (acceptance True); подключение к живому director.py и живой след показаны"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-02/HANDOFF.jsonl",
+    "<AION_ROOT>/evidence/N-L1-02/director-otkazy.json",
+    "<AION_ROOT>/evidence/N-L1-02/vyvod-prob.txt",
+    "vyvod-prob.txt показывает вывод каждой из 7 проб: что вернул договор (поля acceptance, trace, reason) и число записей TASK_REJECTED после шага; 50 кругов дали 50 раз след «уже был» при одной записи; исправленная задача принята (acceptance True); подключение к живому director.py и живой след показаны",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-03": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-2da70402427b",
+     "n": 1,
+     "started_at": 1789896615.963,
+     "finished_at": 1789897059.237,
+     "elapsed_seconds": 443.3,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/bin/markery.py",
+      "<AION_ROOT>/evidence/N-L1-03/razbor-primerov.txt",
+      "единый словарь маркеров bin/markery.py: окончания PASS/DONE/OK и FAIL/FAILED/BLOCKED, шесть правил распознавания; 11 примеров — успешные, объявленные, честный BLOCKED при объявленном одном PASS, READY, строчные, не тот номер, без маркера, два маркера, короткое имя — 11 из 11; неизвестное окончание даёт видимый ОТКАЗ с причиной и кодом 3; обе стороны берут словарь оттуда: Директор объявляет маркеры в брифе (declare), рука разбирает ответ (parse)"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/bin/markery.py",
+    "<AION_ROOT>/evidence/N-L1-03/razbor-primerov.txt",
+    "единый словарь маркеров bin/markery.py: окончания PASS/DONE/OK и FAIL/FAILED/BLOCKED, шесть правил распознавания; 11 примеров — успешные, объявленные, честный BLOCKED при объявленном одном PASS, READY, строчные, не тот номер, без маркера, два маркера, короткое имя — 11 из 11; неизвестное окончание даёт видимый ОТКАЗ с причиной и кодом 3; обе стороны берут словарь оттуда: Директор объявляет маркеры в брифе (declare), рука разбирает ответ (parse)",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-04": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-557d89019ed3",
+     "n": 1,
+     "started_at": 1789897097.912,
+     "finished_at": 1789898006.223,
+     "elapsed_seconds": 908.3,
+     "result": "FAIL",
+     "evidence": [
+      "попытка 1 не доказала пары start/end будилки за весь период: структурный журнал тиков ведётся с 05:50:14; период проверки переносится на 05:50:14+, где у провода, судьи и будилки явные пары; повтор через ворота"
+     ],
+     "spravochnyy_srok_min": 20
+    },
+    {
+     "attempt_id": "A-6d4d4d101b6a",
+     "n": 2,
+     "started_at": 1789898025.712,
+     "finished_at": 1789898079.278,
+     "elapsed_seconds": 53.6,
+     "result": "BLOCKED",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-04/otchyot-nablyudaemosti.txt",
+      "BLOCKED: обязательная улика пункта — журнал крючка ~/.aion-kryuchok/zhurnal.log; крючок убит владельцем 20.09 00:20 (его решение), история 302 начато / 276 закончено; двое судей из трёх трижды читают критерий буквально по этому файлу; живые звенья (провод, судья, будилка) за период со start/end сходятся — см. отчёт; нужно решение владельца OD-008: считать по периоду / переопределить улики без крючка / оставить заблокированным"
+     ],
+     "spravochnyy_srok_min": 20
+    },
+    {
+     "attempt_id": "A-9726069c4a29",
+     "n": 3,
+     "started_at": 1789909069.816,
+     "finished_at": 1789909114.216,
+     "elapsed_seconds": 44.4,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-04/otchyot-nablyudaemosti.txt",
+      "<AION_ROOT>/evidence/N-L1-04/zhurnal-kanala.ndjson",
+      "<AION_ROOT>/evidence/N-L1-04/runner.log",
+      "<AION_ROOT>/evidence/N-L1-04/watchman-ticks.log",
+      "<AION_ROOT>/evidence/N-L1-04/kryuchok-zhurnal-period.log",
+      "<AION_ROOT>/evidence/N-L1-04/PERIOD-UNTIL.txt",
+      "<AION_ROOT>/registries/owner-decision-queue.jsonl",
+      "реальный прогон, период проверки 2026-09-20 05:50:14 … 08:58:19 (одна граница для отчёта и копий, PERIOD-UNTIL.txt); журналы с фактическими путями названы в отчёте; у каждого звена начатых = законченных: провод 4=4, судья 2=2, будилка 174=174 (каждый тик — ход со start/end, копия содержит 348 записей), крючок 0=0 в периоде — крючок убит владельцем 00:20, по решению владельца OD-008 (ANSWERED, в очереди решений) критерий считается по периоду; ветви отказа различимы (judge_rejected, судья, время и звено каждого сбоя); начало и конец каждого хода с временем и результатом"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-04/otchyot-nablyudaemosti.txt",
+    "<AION_ROOT>/evidence/N-L1-04/zhurnal-kanala.ndjson",
+    "<AION_ROOT>/evidence/N-L1-04/runner.log",
+    "<AION_ROOT>/evidence/N-L1-04/watchman-ticks.log",
+    "<AION_ROOT>/evidence/N-L1-04/kryuchok-zhurnal-period.log",
+    "<AION_ROOT>/evidence/N-L1-04/PERIOD-UNTIL.txt",
+    "<AION_ROOT>/registries/owner-decision-queue.jsonl",
+    "реальный прогон, период проверки 2026-09-20 05:50:14 … 08:58:19 (одна граница для отчёта и копий, PERIOD-UNTIL.txt); журналы с фактическими путями названы в отчёте; у каждого звена начатых = законченных: провод 4=4, судья 2=2, будилка 174=174 (каждый тик — ход со start/end, копия содержит 348 записей), крючок 0=0 в периоде — крючок убит владельцем 00:20, по решению владельца OD-008 (ANSWERED, в очереди решений) критерий считается по периоду; ветви отказа различимы (judge_rejected, судья, время и звено каждого сбоя); начало и конец каждого хода с временем и результатом",
+    "director verdict: PASS (2 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-05": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-ab93daa7824e",
+     "n": 1,
+     "started_at": 1789909169.746,
+     "finished_at": 1789909923.644,
+     "elapsed_seconds": 753.9,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-05/vyvod-prob.txt",
+      "<AION_ROOT>/evidence/N-L1-05/dostavki-zhivoy-provod.jsonl",
+      "<AION_ROOT>/checklist/sostoyanie.json",
+      "поправлено по замечаниям: подтверждение отсутствия второго запуска — по записям type=attachment журнала окна: первая доставка 1, повтор 0 (прежний 0/0 был ошибкой подсчёта типа записи, оговорено в файле); реестр: N-L1-05 попытка A-ab93daa7824e → PASS_CANDIDATE (DISPATCH и REPORT в летописи), N-L1-04 три попытки с результатами; ключ доставки item:attempt, повтор подавлен (duplicate_suppressed, код 4), новая попытка после сбоя доставляется; пробы 5 из 5"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-05/vyvod-prob.txt",
+    "<AION_ROOT>/evidence/N-L1-05/dostavki-zhivoy-provod.jsonl",
+    "<AION_ROOT>/checklist/sostoyanie.json",
+    "поправлено по замечаниям: подтверждение отсутствия второго запуска — по записям type=attachment журнала окна: первая доставка 1, повтор 0 (прежний 0/0 был ошибкой подсчёта типа записи, оговорено в файле); реестр: N-L1-05 попытка A-ab93daa7824e → PASS_CANDIDATE (DISPATCH и REPORT в летописи), N-L1-04 три попытки с результатами; ключ доставки item:attempt, повтор подавлен (duplicate_suppressed, код 4), новая попытка после сбоя доставляется; пробы 5 из 5",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-06": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-31730638fe88",
+     "n": 1,
+     "started_at": 1789909978.46,
+     "finished_at": 1789910640.989,
+     "elapsed_seconds": 662.5,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-06/vyvod-prob.txt",
+      "<AION_ROOT>/evidence/N-L1-06/sostoyaniya-ocheredi.jsonl",
+      "<AION_ROOT>/evidence/N-L1-06/perehody.ndjson",
+      "<AION_ROOT>/evidence/N-L1-06/myortvye-pisma.json",
+      "<AION_ROOT>/evidence/N-L1-06/perehody-zhivye.ndjson",
+      "<AION_ROOT>/evidence/N-L1-06/myortvye-pisma-zhivye.json",
+      "очередь на диске svyaz/src/mailqueue.py: состояния PENDING/PROCESSING/DONE/ERROR/DEAD_LETTER, переходы в perehody.ndjson с временем и причиной; пробы 8 из 8: неразбираемое и без обязательного поля → мёртвое письмо с полезной нагрузкой, переполнение (ёмкость 3, 4-е письмо → DEAD_LETTER overflow, три принятых доставлены, исполнитель не падает), повторная обработка ошибок до успеха, после 3 отказов → мёртвое письмо, застрявшее в PROCESSING → мёртвое письмо; мёртвые письма — отдельный список с id, причиной, временем, попытками и нагрузкой; Директор доставляет через очередь (живые переходы и живое мёртвое письмо приложены)"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-06/vyvod-prob.txt",
+    "<AION_ROOT>/evidence/N-L1-06/sostoyaniya-ocheredi.jsonl",
+    "<AION_ROOT>/evidence/N-L1-06/perehody.ndjson",
+    "<AION_ROOT>/evidence/N-L1-06/myortvye-pisma.json",
+    "<AION_ROOT>/evidence/N-L1-06/perehody-zhivye.ndjson",
+    "<AION_ROOT>/evidence/N-L1-06/myortvye-pisma-zhivye.json",
+    "очередь на диске svyaz/src/mailqueue.py: состояния PENDING/PROCESSING/DONE/ERROR/DEAD_LETTER, переходы в perehody.ndjson с временем и причиной; пробы 8 из 8: неразбираемое и без обязательного поля → мёртвое письмо с полезной нагрузкой, переполнение (ёмкость 3, 4-е письмо → DEAD_LETTER overflow, три принятых доставлены, исполнитель не падает), повторная обработка ошибок до успеха, после 3 отказов → мёртвое письмо, застрявшее в PROCESSING → мёртвое письмо; мёртвые письма — отдельный список с id, причиной, временем, попытками и нагрузкой; Директор доставляет через очередь (живые переходы и живое мёртвое письмо приложены)",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-07": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-56f09cf59a90",
+     "n": 1,
+     "started_at": 1789910692.215,
+     "finished_at": 1789910863.5,
+     "elapsed_seconds": 171.3,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-07/vyvod-prob.txt",
+      "<AION_ROOT>/evidence/N-L1-07/zhurnal-kanala.ndjson",
+      "<AION_ROOT>/checklist/sostoyanie.json",
+      "восстановление после перезапуска (svyaz/src/vosstanovlenie.py, подключено в старт руки): четыре состояния проверены отдельно в песочнице — в полёте (продолжить, не выдавать заново), ждущая (доставить один раз по идемпотентному ключу), выполненная без расписки (судить, не исполнять заново), просроченная (напомнить/стоп владельцу, никогда не выдавать заново); реестр до/после сверки неизменен; пробы 5 из 5; живой прогон дважды: рука убита посреди N-L1-07 (в полёте), журнал провода содержит stop → restart → reconciled IN_FLIGHT, реестр до = после (тот же attempt A-56f09cf59a90, ACTIVE), доставок ключа 1, раунд 1, DISPATCHED 1 — ни потери, ни повторного исполнения; стоп по сигналу пишется рукой сама"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-07/vyvod-prob.txt",
+    "<AION_ROOT>/evidence/N-L1-07/zhurnal-kanala.ndjson",
+    "<AION_ROOT>/checklist/sostoyanie.json",
+    "восстановление после перезапуска (svyaz/src/vosstanovlenie.py, подключено в старт руки): четыре состояния проверены отдельно в песочнице — в полёте (продолжить, не выдавать заново), ждущая (доставить один раз по идемпотентному ключу), выполненная без расписки (судить, не исполнять заново), просроченная (напомнить/стоп владельцу, никогда не выдавать заново); реестр до/после сверки неизменен; пробы 5 из 5; живой прогон дважды: рука убита посреди N-L1-07 (в полёте), журнал провода содержит stop → restart → reconciled IN_FLIGHT, реестр до = после (тот же attempt A-56f09cf59a90, ACTIVE), доставок ключа 1, раунд 1, DISPATCHED 1 — ни потери, ни повторного исполнения; стоп по сигналу пишется рукой сама",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L1-08": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-ff1ddf950883",
+     "n": 1,
+     "started_at": 1789910924.575,
+     "finished_at": 1789911164.748,
+     "elapsed_seconds": 240.2,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L1-08/priyomka-kanala.md",
+      "<AION_ROOT>/evidence/N-L1-08/letopis-svyazi.ndjson",
+      "<AION_ROOT>/evidence/N-L1-08/letopis-vorot.ndjson",
+      "<AION_ROOT>/evidence/N-L1-08/dostavki.jsonl",
+      "<AION_ROOT>/evidence/N-L1-08/zhurnal-kanala.ndjson",
+      "приёмка канала по летописям (bin/priyomka-kanala.py): 18 кругов Директор→исполнитель→Директор с 04:30, 17 с возвратом, решением Директора и зачётом, 1 в работе; каждая передача и каждый суд позваны рукой (round 16, judge 15), владелец как курьер — 0; потерь нет (у каждой выданной попытки возврат или в работе); двойного исполнения нет (ключи доставки по одному разу, 2 повтора подавлены); результат привязан к попытке (REPORT.attempt = DISPATCH.attempt, N-L1-04 три попытки с результатами); перезапуски: stop/restart/reconciled с сохранённой активной задачей (N-L1-07 дважды); идентификаторы задач, исполнителя, попыток, результатов и перезапусков названы; оговорки записаны честно"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L1-08/priyomka-kanala.md",
+    "<AION_ROOT>/evidence/N-L1-08/letopis-svyazi.ndjson",
+    "<AION_ROOT>/evidence/N-L1-08/letopis-vorot.ndjson",
+    "<AION_ROOT>/evidence/N-L1-08/dostavki.jsonl",
+    "<AION_ROOT>/evidence/N-L1-08/zhurnal-kanala.ndjson",
+    "приёмка канала по летописям (bin/priyomka-kanala.py): 18 кругов Директор→исполнитель→Директор с 04:30, 17 с возвратом, решением Директора и зачётом, 1 в работе; каждая передача и каждый суд позваны рукой (round 16, judge 15), владелец как курьер — 0; потерь нет (у каждой выданной попытки возврат или в работе); двойного исполнения нет (ключи доставки по одному разу, 2 повтора подавлены); результат привязан к попытке (REPORT.attempt = DISPATCH.attempt, N-L1-04 три попытки с результатами); перезапуски: stop/restart/reconciled с сохранённой активной задачей (N-L1-07 дважды); идентификаторы задач, исполнителя, попыток, результатов и перезапусков названы; оговорки записаны честно",
+    "director verdict: PASS (2 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-01": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-edb856b0a30b",
+     "n": 1,
+     "started_at": 1789911224.028,
+     "finished_at": 1789911397.402,
+     "elapsed_seconds": 173.4,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-01/01-boot.txt",
+      "<AION_ROOT>/evidence/N-L2-01/02-state-invalid.txt",
+      "<AION_ROOT>/evidence/N-L2-01/03-document-conflict.txt",
+      "<AION_ROOT>/evidence/N-L2-01/04-stable-protected.txt",
+      "<AION_ROOT>/evidence/N-L2-01/05-change-unknown.txt",
+      "<AION_ROOT>/evidence/N-L2-01/06-unknown-critical.txt",
+      "<AION_ROOT>/evidence/N-L2-01/07-failure-signature.txt",
+      "<AION_ROOT>/evidence/N-L2-01/08-clean-allow.txt",
+      "<AION_ROOT>/evidence/N-L2-01/09-unknown-incomplete.txt",
+      "<AION_ROOT>/evidence/N-L2-01/10-zhivoy-kanon.txt",
+      "<AION_ROOT>/evidence/N-L2-01/itog-prob.txt",
+      "aionctl gate <действие>: семь условий запрета (boot != PASS, state invalid, DOCUMENT_CONFLICT, Stable protected, Change unknown, UNKNOWN по критической проверке, сигнатура провала) — семь отдельных песочных сценариев, в каждом сработало ровно одно названное условие → BLOCKED (код 3), причина видна в выводе; чистое подтверждённое состояние → ALLOW (код 0); неизвестное/неполное состояние (зеркало не читается) → BLOCKED; любая ошибка проверки → BLOCKED (fail-closed, показано на копии без реестров); 9 файлов вывода по одному на сценарий; крючок не подключён (только руками владельца)"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-01/01-boot.txt",
+    "<AION_ROOT>/evidence/N-L2-01/02-state-invalid.txt",
+    "<AION_ROOT>/evidence/N-L2-01/03-document-conflict.txt",
+    "<AION_ROOT>/evidence/N-L2-01/04-stable-protected.txt",
+    "<AION_ROOT>/evidence/N-L2-01/05-change-unknown.txt",
+    "<AION_ROOT>/evidence/N-L2-01/06-unknown-critical.txt",
+    "<AION_ROOT>/evidence/N-L2-01/07-failure-signature.txt",
+    "<AION_ROOT>/evidence/N-L2-01/08-clean-allow.txt",
+    "<AION_ROOT>/evidence/N-L2-01/09-unknown-incomplete.txt",
+    "<AION_ROOT>/evidence/N-L2-01/10-zhivoy-kanon.txt",
+    "<AION_ROOT>/evidence/N-L2-01/itog-prob.txt",
+    "aionctl gate <действие>: семь условий запрета (boot != PASS, state invalid, DOCUMENT_CONFLICT, Stable protected, Change unknown, UNKNOWN по критической проверке, сигнатура провала) — семь отдельных песочных сценариев, в каждом сработало ровно одно названное условие → BLOCKED (код 3), причина видна в выводе; чистое подтверждённое состояние → ALLOW (код 0); неизвестное/неполное состояние (зеркало не читается) → BLOCKED; любая ошибка проверки → BLOCKED (fail-closed, показано на копии без реестров); 9 файлов вывода по одному на сценарий; крючок не подключён (только руками владельца)",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-02": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-0a813f4667a0",
+     "n": 1,
+     "started_at": 1789911441.255,
+     "finished_at": 1789911542.538,
+     "elapsed_seconds": 101.3,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-02/vyvod-vorot-i-reestr.txt",
+      "<AION_ROOT>/evidence/N-L2-02/transkript-svezhaya-sessiya.txt",
+      "<AION_ROOT>/registries/failures.jsonl",
+      "память об отказах без разговора: условие зарегистрировано только в реестре (запись PROBA-N-L2-02-KIT-7 с сигнатурой и безопасной заменой); настоящая свежая сессия claude -p без истории вызвала ворота — BLOCKED с именем отказа и безопасной заменой; контроль: на копии канона без этой записи те же ворота дают ALLOW — распознавание идёт из записи реестра, не из памяти диалога; настоящий известный отказ STABLE_MUTATION тоже BLOCKED с заменой"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-02/vyvod-vorot-i-reestr.txt",
+    "<AION_ROOT>/evidence/N-L2-02/transkript-svezhaya-sessiya.txt",
+    "<AION_ROOT>/registries/failures.jsonl",
+    "память об отказах без разговора: условие зарегистрировано только в реестре (запись PROBA-N-L2-02-KIT-7 с сигнатурой и безопасной заменой); настоящая свежая сессия claude -p без истории вызвала ворота — BLOCKED с именем отказа и безопасной заменой; контроль: на копии канона без этой записи те же ворота дают ALLOW — распознавание идёт из записи реестра, не из памяти диалога; настоящий известный отказ STABLE_MUTATION тоже BLOCKED с заменой",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-03": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-0c2defcedeeb",
+     "n": 1,
+     "started_at": 1789911653.586,
+     "finished_at": 1789911820.774,
+     "elapsed_seconds": 167.2,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-03/vyvod-prob.txt",
+      "<AION_ROOT>/evidence/N-L2-03/sha-do-i-posle.json",
+      "<AION_ROOT>/evidence/N-L2-03/stable.json",
+      "<AION_ROOT>/evidence/N-L2-03/candidate.json",
+      "стабильное = явная ссылка: git-метка stable-2026-09-20-01 на коммите канона + отпечатки 715 файлов (state/stable.json: STABLE_ID, commit, runtime, evidence set, validator, время, restore_status); кандидат = отдельное рабочее дерево git ../AION-CONTROL-kandidat на своей ветке (изоляция каталогом под жёлтый риск, state/candidate.json); замер обоих ДО изменения; возврат ДО изменения: метка развёрнута в песочницу, 715 файлов сверены, расхождений 0 — restore PROVEN; изменение внесено в кандидата: стабильное не изменилось (sha равен), кандидат изменился; возврат после — тоже сходится; пробы 6 из 6; исходные и контрольные SHA в sha-do-i-posle.json"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-03/vyvod-prob.txt",
+    "<AION_ROOT>/evidence/N-L2-03/sha-do-i-posle.json",
+    "<AION_ROOT>/evidence/N-L2-03/stable.json",
+    "<AION_ROOT>/evidence/N-L2-03/candidate.json",
+    "стабильное = явная ссылка: git-метка stable-2026-09-20-01 на коммите канона + отпечатки 715 файлов (state/stable.json: STABLE_ID, commit, runtime, evidence set, validator, время, restore_status); кандидат = отдельное рабочее дерево git ../AION-CONTROL-kandidat на своей ветке (изоляция каталогом под жёлтый риск, state/candidate.json); замер обоих ДО изменения; возврат ДО изменения: метка развёрнута в песочницу, 715 файлов сверены, расхождений 0 — restore PROVEN; изменение внесено в кандидата: стабильное не изменилось (sha равен), кандидат изменился; возврат после — тоже сходится; пробы 6 из 6; исходные и контрольные SHA в sha-do-i-posle.json",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-04": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-2aa620837ca2",
+     "n": 1,
+     "started_at": 1789911874.941,
+     "finished_at": 1789912091.987,
+     "elapsed_seconds": 217.0,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-04/vse-sledy.txt",
+      "<AION_ROOT>/evidence/N-L2-04/proverka-sledov-i-invariantov.txt",
+      "<AION_ROOT>/evidence/N-L2-04/invariants.jsonl",
+      "<AION_ROOT>/evidence/N-L2-04/regressii.txt",
+      "по замечанию судьи: все 24 файла причинных следов предъявлены целиком одной выгрузкой (vse-sledy.txt: путь, sha256, число полей, пустые поля — нет), плюс каталог registries/sledy/; реестр инвариантов — 15 записей с пробой, замеренной ценой и частотой; проверка: следы полны, факт = заявленное, все инварианты держатся; регрессии — 10 наборов проб + unittest зелёные"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-04/vse-sledy.txt",
+    "<AION_ROOT>/evidence/N-L2-04/proverka-sledov-i-invariantov.txt",
+    "<AION_ROOT>/evidence/N-L2-04/invariants.jsonl",
+    "<AION_ROOT>/evidence/N-L2-04/regressii.txt",
+    "по замечанию судьи: все 24 файла причинных следов предъявлены целиком одной выгрузкой (vse-sledy.txt: путь, sha256, число полей, пустые поля — нет), плюс каталог registries/sledy/; реестр инвариантов — 15 записей с пробой, замеренной ценой и частотой; проверка: следы полны, факт = заявленное, все инварианты держатся; регрессии — 10 наборов проб + unittest зелёные",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-05": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-9cd492480797",
+     "n": 1,
+     "started_at": 1789912153.348,
+     "finished_at": 1789912338.784,
+     "elapsed_seconds": 185.4,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-05/otkaz-zapisi-verdikta.txt",
+      "<AION_ROOT>/evidence/N-L2-05/metadannye-verdikta-N-L2-05.json",
+      "<AION_ROOT>/evidence/N-L2-05/opisanie.txt",
+      "метаданные вердикта именно по N-L2-05 приложены (svyaz/state/verdikty/N-L2-05-A-9cd492480797-*.json, записан director.py при первом суде этого пункта): проверяющий — codex/local, три отдельные нити; строитель — claude, окно b572851d, права на вердикт нет; отказ записи вердикта строителем — два REFUSED в летописи ворот с причиной и временем"
+     ],
+     "spravochnyy_srok_min": 45
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-05/otkaz-zapisi-verdikta.txt",
+    "<AION_ROOT>/evidence/N-L2-05/metadannye-verdikta-N-L2-05.json",
+    "<AION_ROOT>/evidence/N-L2-05/opisanie.txt",
+    "метаданные вердикта именно по N-L2-05 приложены (svyaz/state/verdikty/N-L2-05-A-9cd492480797-*.json, записан director.py при первом суде этого пункта): проверяющий — codex/local, три отдельные нити; строитель — claude, окно b572851d, права на вердикт нет; отказ записи вердикта строителем — два REFUSED в летописи ворот с причиной и временем",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-06": {
+   "state": "DONE",
+   "attempts": [
+    {
+     "attempt_id": "A-1747dfc18543",
+     "n": 1,
+     "started_at": 1789912374.297,
+     "finished_at": 1789912594.82,
+     "elapsed_seconds": 220.5,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-06/zhurnal-zapuskov.ndjson",
+      "<AION_ROOT>/evidence/N-L2-06/vyvod.txt",
+      "<AION_ROOT>/bin/regressii.py",
+      "отбор регрессий по слоям (bin/regressii.py): direct (карта путь→проба), affected (карта зависимостей), invariants (дешёвые ≤1 с всегда, из registries/invariants.jsonl), extended (всё, включая дорогие, при продвижении); для каждого типа изменения слои и причина печатаются; три реальных примера: мелкая правка улики — 13 дешёвых проб, 0.9 с, дорогие пропущены и названы; правка кода director.py — direct + affected(3) + invariants, 0.7 с; продвижение stable-2026-09-20-01 — 18 проб включая дорогие, 12.7 с; журнал запусков по слоям с типом, путями, выбранными пробами, результатом и временем — registries/regressii-zhurnal.ndjson и копия в уликах"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [
+    "<AION_ROOT>/evidence/N-L2-06/zhurnal-zapuskov.ndjson",
+    "<AION_ROOT>/evidence/N-L2-06/vyvod.txt",
+    "<AION_ROOT>/bin/regressii.py",
+    "отбор регрессий по слоям (bin/regressii.py): direct (карта путь→проба), affected (карта зависимостей), invariants (дешёвые ≤1 с всегда, из registries/invariants.jsonl), extended (всё, включая дорогие, при продвижении); для каждого типа изменения слои и причина печатаются; три реальных примера: мелкая правка улики — 13 дешёвых проб, 0.9 с, дорогие пропущены и названы; правка кода director.py — direct + affected(3) + invariants, 0.7 с; продвижение stable-2026-09-20-01 — 18 проб включая дорогие, 12.7 с; журнал запусков по слоям с типом, путями, выбранными пробами, результатом и временем — registries/regressii-zhurnal.ndjson и копия в уликах",
+    "director verdict: PASS (3 of 3 votes)"
+   ],
+   "done_by": "director"
+  },
+  "N-L2-07": {
+   "state": "PASS_CANDIDATE",
+   "attempts": [
+    {
+     "attempt_id": "A-76e2607b3f21",
+     "n": 1,
+     "started_at": 1789912648.674,
+     "finished_at": 1789916433.055,
+     "elapsed_seconds": 3784.4,
+     "result": "PASS_CANDIDATE",
+     "evidence": [
+      "<AION_ROOT>/evidence/N-L2-07/vyvod-prob.txt",
+      "<AION_ROOT>/evidence/N-L2-07/reestr-i-perehody.txt",
+      "<AION_ROOT>/evidence/N-L2-07/semeystva.jsonl",
+      "<AION_ROOT>/evidence/N-L2-07/perehody-diagnostiki.ndjson",
+      "семейства отказов (bin/semeystva.py): реестр registries/semeystva.jsonl — группировка по корню, счётчик повторов, порог 3, состояние; третий повтор → запись перехода в диагностику (время, семейство, счётчик, причина) и запрет заплаток; пробы 6 из 6 (второй повтор разрешён, третий — переход, четвёртый не плодит второго перехода, гипотеза снимает запрет); реальный случай HEALTH_FALSE_POSITIVE: 3 повтора → DIAGNOSIS_REQUIRED → записаны диагностика и проверяемая гипотеза; ворота (aionctl gate, условие 7) блокируют действие по семейству в диагностике и пропускают под записанной гипотезой; метки старого реестра (prichina и др.) честно помечены LEGACY_LABEL"
+     ],
+     "spravochnyy_srok_min": 20
+    }
+   ],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L2-08": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L2-09": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L2-10": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-01": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-04": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-05": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-06": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L3-07": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-03": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-04": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-05": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-06": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-07": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-08": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-09": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L4-10": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-04": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-05": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-06": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L5-07": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L6-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L7-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L7-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L7-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L8-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L8-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L8-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L9-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L9-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L9-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L10-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L10-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L10-03": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-COMPLETE-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  }
+ },
+ "находки": [
+  {
+   "когда": 1789916386.911,
+   "кем": "worker",
+   "что": "план «Закрепить» (11-PLAN-ZAKREPIT.md): стену (root + защищённая ветка) ставить сразу после L2, не в L5; судья-исполнитель добавлен к N-L2-05 (сделано 20.09); 05 собирать из доски (L0). Переопределение пунктов Мастера — решение владельца через Директора",
+   "при_каком_пункте": "N-L2-07"
+  }
+ ]
+}

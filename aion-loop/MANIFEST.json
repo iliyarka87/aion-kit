@@ -1,0 +1,501 @@
+{
+ "product": "aion-loop",
+ "version": "0.1.0",
+ "built": "2026-09-20T16:14:43-0400",
+ "source_canon": "<AION_ROOT> (public kit build; company data removed)",
+ "source_commit": "8ddcca17c31fd83bdfacc79cfd2eb4ec243d8b9a",
+ "files": 97,
+ "external": {
+  "codex": "Codex app-server (director and judge) — optional; solo mode: `claude -p` (see INSTALL.md)",
+  "judge_venv": "$AION_JUDGE_PYTHON — Python 3.12 + inspect_ai (requirements-sudya.txt); optional",
+  "claude": "Claude Code in VS Code — the executor window, found by its session passport ~/.claude/sessions/<pid>.json",
+  "python3": "Python 3.9+ — everything else, no third-party packages"
+ },
+ "manifest": [
+  {
+   "path": "CHANGELOG.md",
+   "sha256": "e2a290cf221dce2ccbc57176bd44779383b3e5710e457fa80cad5599228e9520",
+   "source": "CHANGELOG.md"
+  },
+  {
+   "path": "LICENSE",
+   "sha256": "3b1d5ed785c7e1fa15d2ee8379bbec749385f8b6640e288c562c46e91aefd94e",
+   "source": "LICENSE"
+  },
+  {
+   "path": "README.md",
+   "sha256": "7a65cab1abf48178a29eef075e8a8f786e4589c2f8b71a2a398c2dd258db725f",
+   "source": "README.md"
+  },
+  {
+   "path": "VERSION",
+   "sha256": "e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67",
+   "source": "VERSION"
+  },
+  {
+   "path": "bin/aion-loop",
+   "sha256": "3d8b51ed30027cf652a8533996cd46b381a5898c4aeb913dd33b872b91f077ff",
+   "source": "bin/aion-loop"
+  },
+  {
+   "path": "bin/aion_root",
+   "sha256": "173f039780bfe378f471bc34a48e46887469a5e7058c121a6241f5d4f178d921",
+   "source": "bin/aion_root"
+  },
+  {
+   "path": "bin/aionctl",
+   "sha256": "2ceb5b1a89463ab73de46ebad3132c8d2321bac988d2f5f540836d5cac77d1ea",
+   "source": "bin/aionctl"
+  },
+  {
+   "path": "bin/dogovor_zadachi.py",
+   "sha256": "e044e704aea97de8ce79b900193878b0b0291aed324897faacbe3e3e5ec7c4a6",
+   "source": "bin/dogovor_zadachi.py"
+  },
+  {
+   "path": "bin/gate-hook.py",
+   "sha256": "c4f831669567e62a64ac253e085f8d51d061c170e5300417ac8fb4212f0d9845",
+   "source": "bin/gate-hook.py"
+  },
+  {
+   "path": "bin/kopiya.py",
+   "sha256": "598ab5b23837701c70f9a82b2396b7c7256d60684f65637ed8f709e635718068",
+   "source": "bin/kopiya.py"
+  },
+  {
+   "path": "bin/markery.py",
+   "sha256": "b0f58ce0a3a7c5b97df5b5492bd965415fc9cced030f12574b910a11176ad417",
+   "source": "bin/markery.py"
+  },
+  {
+   "path": "bin/nablyudaemost.py",
+   "sha256": "ab2257d876da101f491fd08b8f653a4cb340d92665713e841e821a39abd1db72",
+   "source": "bin/nablyudaemost.py"
+  },
+  {
+   "path": "bin/ochered.py",
+   "sha256": "d4c228c6c161c5bc5f98d8a52f67a98aa5180fad6f8ad1f825e1a685337845b2",
+   "source": "bin/ochered.py"
+  },
+  {
+   "path": "bin/opis-mashiny.py",
+   "sha256": "8efe997f29db8fbd54fa581fe24e4d3e764cb6255aed7863bffc9d578657c08a",
+   "source": "bin/opis-mashiny.py"
+  },
+  {
+   "path": "bin/priyomka-kanala.py",
+   "sha256": "83ac5699263249e1a0539bc4ba2709860abb5756c8a86e4765e5b2776a1aace4",
+   "source": "bin/priyomka-kanala.py"
+  },
+  {
+   "path": "bin/proby-dostavki.py",
+   "sha256": "1a91bd1e740d17862b05213f8f9753ebd669a0e6687742e94c522128fb2d016a",
+   "source": "bin/proby-dostavki.py"
+  },
+  {
+   "path": "bin/proby-marshruta.py",
+   "sha256": "7e118e3c9119b16328a7225c0b523069c6bbfeb18ef0d5ef371efc9f09eb30d4",
+   "source": "bin/proby-marshruta.py"
+  },
+  {
+   "path": "bin/proby-sverki.py",
+   "sha256": "22a87a68e07cff97ebaf96a135e8f1d3089b3bebed223424eb560df22a9378f8",
+   "source": "bin/proby-sverki.py"
+  },
+  {
+   "path": "bin/proby-vlasti.py",
+   "sha256": "3226475cc36f46fc75fafbbe3259593406b6fe08318285704a6917bb6e6f4b23",
+   "source": "bin/proby-vlasti.py"
+  },
+  {
+   "path": "bin/proby-vorot-izmeneniya.py",
+   "sha256": "625fdcac739fe01966e54595d470b7eb469c32020eedb490763cd69b825b99cc",
+   "source": "bin/proby-vorot-izmeneniya.py"
+  },
+  {
+   "path": "bin/proverka-otkazov.py",
+   "sha256": "67dbc417cb124093f15ae00feb9ddf52e48b6bb1c681ebcee581eb16a9b5581e",
+   "source": "bin/proverka-otkazov.py"
+  },
+  {
+   "path": "bin/regressii.py",
+   "sha256": "76289a7195a7c79dfc03a28a0de826b01a148ead68c8302b202672f3c93d6cba",
+   "source": "bin/regressii.py"
+  },
+  {
+   "path": "bin/semeystva.py",
+   "sha256": "ec0c2f2ba2e47dee0fe8f21c3fc8010f9df6c385785938e7f686457ad3f3f500",
+   "source": "bin/semeystva.py"
+  },
+  {
+   "path": "bin/sled.py",
+   "sha256": "8168eab9b840656eaa37b0bfa0fdd4a3e4aa79f8c22bc28c66cc995a688d8c26",
+   "source": "bin/sled.py"
+  },
+  {
+   "path": "bin/sobrat-05.py",
+   "sha256": "b3189c7003d1d0485ed42f83f1844a6e2c9498f004699ca72c2073460fc0ccf1",
+   "source": "bin/sobrat-05.py"
+  },
+  {
+   "path": "bin/sobrat-otkazy.py",
+   "sha256": "e9bf5f665dfd594e5f128c332ec6c5b7de242052908008e75b5300d09f9b4d33",
+   "source": "bin/sobrat-otkazy.py"
+  },
+  {
+   "path": "bin/sobrat-reestry.py",
+   "sha256": "e094b1ec950de4073ad4df6cb613631635edb550b01f1ce87efd1ef9f3ffc22c",
+   "source": "bin/sobrat-reestry.py"
+  },
+  {
+   "path": "bin/stabilnoe.py",
+   "sha256": "1f852688b5dd668695c4150675e054ef72e234da6c9e5d36cb81c62c42db64ef",
+   "source": "bin/stabilnoe.py"
+  },
+  {
+   "path": "bin/uliki.py",
+   "sha256": "15f0d30eb0c505ea2a6858f0fa1b8bbfdddcb3c7e03e89432a9425fb884c699b",
+   "source": "bin/uliki.py"
+  },
+  {
+   "path": "checklist/README.md",
+   "sha256": "31293ea27a2b58856064b0847740ce1e8ff88cdb8b34e57bd156ddecdd646fb7",
+   "source": "checklist/README.md"
+  },
+  {
+   "path": "checklist/examples/example-checklist.md",
+   "sha256": "17e2c9d3d3bcf52da2c1fa70f6537d4712a66863af3e39f443ca756745691b05",
+   "source": "checklist/examples/example-checklist.md"
+  },
+  {
+   "path": "checklist/opredelenie.json",
+   "sha256": "d3c12136330c3418c23a196f4e7d5fc958df318517083babc8e829b8de3f40c2",
+   "source": "checklist/opredelenie.json"
+  },
+  {
+   "path": "checklist/proby.py",
+   "sha256": "2a8ed9a7c78235f5cdd230ea5a34a96119046fcea9eec446c3a5f8416e23a707",
+   "source": "checklist/proby.py"
+  },
+  {
+   "path": "checklist/snapshots/sostoyanie-2026-09-20.json",
+   "sha256": "2bf42dda2bf8d7c9fd4bb41b21a926fc9f2a970974952462678da4a62e5b0878",
+   "source": "checklist/snapshots/sostoyanie-2026-09-20.json"
+  },
+  {
+   "path": "checklist/sobrat.py",
+   "sha256": "7e0de7c53b519b7cdee9486176c9c40d6b32e00537a64d48631b5fad5ad01596",
+   "source": "checklist/sobrat.py"
+  },
+  {
+   "path": "checklist/sostoyanie.json",
+   "sha256": "23aa23c16ace1cfae4c52d8590960f7b5cae0c79b86b83519fb926c20418e93d",
+   "source": "checklist/sostoyanie.json"
+  },
+  {
+   "path": "checklist/vorota.py",
+   "sha256": "5b29ca30d776fed9f014a983c859f9e58f90b50e8d4dac485bb085799b415f87",
+   "source": "checklist/vorota.py"
+  },
+  {
+   "path": "data/.aion-root",
+   "sha256": "e98f3c45b86b51aafcf52e07725798cfbc5012052c50de9ae88842fc7ba869e7",
+   "source": "data/.aion-root"
+  },
+  {
+   "path": "data/authority.json",
+   "sha256": "754087bda5c78906aa2015fd34f10c70eafac25e8e191218df7cbb9bedff4bfb",
+   "source": "data/authority.json"
+  },
+  {
+   "path": "data/laws.json",
+   "sha256": "c1e37202cbeed07d42a2e9eaed6b43fc24f37a5a20b7429231c8c7954b8324e4",
+   "source": "data/laws.json"
+  },
+  {
+   "path": "data/routes.json",
+   "sha256": "b766f3ab05b2599ddc666dde0e92035c881acc303ab96ef481c9c9120546a54d",
+   "source": "data/routes.json"
+  },
+  {
+   "path": "docs/README.md",
+   "sha256": "90f65186e8fc682538857dff5e8e4d651f715d088121d52fbbee5691c879ead2",
+   "source": "docs/README.md"
+  },
+  {
+   "path": "evidence/N-L0-02/otchet.md",
+   "sha256": "29d99579f375daf7afa402d8ff8f53064a6674a80908dca4c744bfeac9fe4ecf",
+   "source": "evidence/N-L0-02/otchet.md"
+  },
+  {
+   "path": "evidence/N-L0-02/vyvod-prob.txt",
+   "sha256": "c9cc5958d20f2ac926166a20868eae13fd4bee02d185bf0da5d38702ab3db6de",
+   "source": "evidence/N-L0-02/vyvod-prob.txt"
+  },
+  {
+   "path": "evidence/README.md",
+   "sha256": "3a8516e7fff5a9e4d2b0bc1af2cc1ccdbd5fdbf1d132f9e1714bdac9a998381a",
+   "source": "evidence/README.md"
+  },
+  {
+   "path": "mailbox/iz_sessii.py",
+   "sha256": "0f53dac4a73c471fe6d9421f1a136e4c25dce6abe3d1cca5b40449f19a1e3b1e",
+   "source": "mailbox/iz_sessii.py"
+  },
+  {
+   "path": "mailbox/sessii.py",
+   "sha256": "c6c1c69ceab9b0e0e2155bf230329e439001d822a947983abf1632d7d85a966f",
+   "source": "mailbox/sessii.py"
+  },
+  {
+   "path": "mailbox/v_sessiyu.py",
+   "sha256": "c7258365ba964bf49e05107828b55935fa9a4ecabda357dfb2af3526178df994",
+   "source": "mailbox/v_sessiyu.py"
+  },
+  {
+   "path": "proverit-komplekt.py",
+   "sha256": "1f38803149e11a725c4bf8ad97f1a97714457565497298744095570889422227",
+   "source": "proverit-komplekt.py"
+  },
+  {
+   "path": "registries/README.md",
+   "sha256": "0629fbdfc20bf8813dcf41b74ab87a44d4fe39daab2792c1f649a4071faefe32",
+   "source": "registries/README.md"
+  },
+  {
+   "path": "registries/ai-exchange-ledger.jsonl",
+   "sha256": "e30836c914629387028d74b1801ae87d75937f6e7d35b8c26829d0ab5fdaeb37",
+   "source": "registries/ai-exchange-ledger.jsonl"
+  },
+  {
+   "path": "registries/company.jsonl",
+   "sha256": "6e5b4144f8a117a2294d1eaf17b87ed4cf4f97caf411f2e14db3d94b1503f09a",
+   "source": "registries/company.jsonl"
+  },
+  {
+   "path": "registries/decisions.jsonl",
+   "sha256": "930b71f54066c026aa7e7bbfcd742a7d9f75be91f5b0087c47d86584e246a9d1",
+   "source": "registries/decisions.jsonl"
+  },
+  {
+   "path": "registries/failures.jsonl",
+   "sha256": "202eb8dac69d8c3d20a7d425a7ecc587a9ed02b56fdac2745d986efc7206b39f",
+   "source": "registries/failures.jsonl"
+  },
+  {
+   "path": "registries/incidents.jsonl",
+   "sha256": "a0b47bae34c1ef70321e3764a6d6700c2e53cc9859e82c1074e6691241e5ac45",
+   "source": "registries/incidents.jsonl"
+  },
+  {
+   "path": "registries/invariants.jsonl",
+   "sha256": "35a2c1e96e8ee721ae30e8814c45127b3e49385467f422b2a5bbf1f25547f05e",
+   "source": "registries/invariants.jsonl"
+  },
+  {
+   "path": "registries/istochniki/company.jsonl",
+   "sha256": "6e5b4144f8a117a2294d1eaf17b87ed4cf4f97caf411f2e14db3d94b1503f09a",
+   "source": "registries/istochniki/company.jsonl"
+  },
+  {
+   "path": "registries/istochniki/product-manifest.jsonl",
+   "sha256": "be6444419635471df02dc6f3e025498372cac7eafc30c1da24353578b8da7d6f",
+   "source": "registries/istochniki/product-manifest.jsonl"
+  },
+  {
+   "path": "registries/istochniki/resheniya-novye.jsonl",
+   "sha256": "930b71f54066c026aa7e7bbfcd742a7d9f75be91f5b0087c47d86584e246a9d1",
+   "source": "registries/istochniki/resheniya-novye.jsonl"
+  },
+  {
+   "path": "registries/methods.jsonl",
+   "sha256": "84a39f067c87635fd4e1ba25a4df10c3aad3b50e991fb84c6049ccd85b623b30",
+   "source": "registries/methods.jsonl"
+  },
+  {
+   "path": "registries/otkazy-novye.jsonl",
+   "sha256": "202eb8dac69d8c3d20a7d425a7ecc587a9ed02b56fdac2745d986efc7206b39f",
+   "source": "registries/otkazy-novye.jsonl"
+  },
+  {
+   "path": "registries/owner-decision-queue.jsonl",
+   "sha256": "84d70c97b7f54f75042a60dbfac39203ee6ae52ddda240f4a03ca97c2ff3b2e4",
+   "source": "registries/owner-decision-queue.jsonl"
+  },
+  {
+   "path": "registries/patterns.jsonl",
+   "sha256": "5a9c126cb0c379be8db587d6d1e2ba908c946b96d2bf55e69cfe9d70d6907862",
+   "source": "registries/patterns.jsonl"
+  },
+  {
+   "path": "registries/perehody-diagnostiki.ndjson",
+   "sha256": "0bb2259238c4fec35675bbb400e11004caf959146d068bdf52c0a74a983df41b",
+   "source": "registries/perehody-diagnostiki.ndjson"
+  },
+  {
+   "path": "registries/product-manifest.jsonl",
+   "sha256": "fde201f2b1f1b0d6d5ad63cabc33097e51d012e16a35400c303cdd7adf5f2288",
+   "source": "registries/product-manifest.jsonl"
+  },
+  {
+   "path": "registries/regressii-zhurnal.ndjson",
+   "sha256": "8fed9e0720b4511aab8e917f586aa88830207087af25ec7ae8dbc73274096fbb",
+   "source": "registries/regressii-zhurnal.ndjson"
+  },
+  {
+   "path": "registries/semeystva.jsonl",
+   "sha256": "2e891b30682f7a6955e4d9cea6a533addf763cea3acdf8730f48c14f9bb6165c",
+   "source": "registries/semeystva.jsonl"
+  },
+  {
+   "path": "registries/sledy/.gitkeep",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "source": "registries/sledy/.gitkeep"
+  },
+  {
+   "path": "requirements-sudya.txt",
+   "sha256": "c894d35ff3053ce9eb0da6cdf5eda5ea51a07fff7cc601092a4a242c9526afe4",
+   "source": "requirements-sudya.txt"
+  },
+  {
+   "path": "state/schema.json",
+   "sha256": "2acdc174f10a258e8dbe0b498da7029282b5d0024df3fa09356fe94929d6dfb8",
+   "source": "state/schema.json"
+  },
+  {
+   "path": "state/snapshots/.gitkeep",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "source": "state/snapshots/.gitkeep"
+  },
+  {
+   "path": "state/sostoyanie.py",
+   "sha256": "c4ded43f27a19fe0c765632950e5156ff491b883867c46c93dc2381083a72310",
+   "source": "state/sostoyanie.py"
+  },
+  {
+   "path": "state/zhelaemoe.json",
+   "sha256": "edf7c1981d012466979c9392770015ac7f968b51cdbe9c9ba19aa27a5b29bfdd",
+   "source": "state/zhelaemoe.json"
+  },
+  {
+   "path": "svyaz/CHANGELOG.md",
+   "sha256": "fb11f2dee0cf08fa069877cbd144ace6d7a82af64ac108baa55e1805cd6afdfb",
+   "source": "svyaz/CHANGELOG.md"
+  },
+  {
+   "path": "svyaz/LICENSE",
+   "sha256": "3b1d5ed785c7e1fa15d2ee8379bbec749385f8b6640e288c562c46e91aefd94e",
+   "source": "svyaz/LICENSE"
+  },
+  {
+   "path": "svyaz/README.md",
+   "sha256": "c8c3226c2161fb30589eb667deb5ecf603f770ea3da892023233ab073b7c8c43",
+   "source": "svyaz/README.md"
+  },
+  {
+   "path": "svyaz/src/director.py",
+   "sha256": "d75c73a8973b995977b8c59785f30f09b3a8013659f1ecea3a831f6af3452910",
+   "source": "svyaz/src/director.py"
+  },
+  {
+   "path": "svyaz/src/link.py",
+   "sha256": "98e238320cd1079d1662e51f8c185175154a64fb98b5a1e78c9086e5a1f091f4",
+   "source": "svyaz/src/link.py"
+  },
+  {
+   "path": "svyaz/src/mailqueue.py",
+   "sha256": "73751aac0971523f112d9f3ce4c1e39f297807f8aae19571c287069b48c4359e",
+   "source": "svyaz/src/mailqueue.py"
+  },
+  {
+   "path": "svyaz/src/runner.py",
+   "sha256": "1c138372913148718d3f1370be2a7843911878fcd9c60408709d772ab12e82a2",
+   "source": "svyaz/src/runner.py"
+  },
+  {
+   "path": "svyaz/src/vosstanovlenie.py",
+   "sha256": "6b38f193c094c9cc6d1d28bef0f8feb04ae4dafa4815f5adde0cd52bbe61e28c",
+   "source": "svyaz/src/vosstanovlenie.py"
+  },
+  {
+   "path": "svyaz/src/watch.py",
+   "sha256": "c067ccd8ee9a130e7dab3e88f001fd5fab858538548798372739db41d7501d41",
+   "source": "svyaz/src/watch.py"
+  },
+  {
+   "path": "svyaz/src/watchman.py",
+   "sha256": "6e608009ffd2db09f82451c23a795657569a580fa2ef6d239d96ce301c60203d",
+   "source": "svyaz/src/watchman.py"
+  },
+  {
+   "path": "svyaz/state/storoj-timer.sh",
+   "sha256": "ee7e32f035c0778a6217814416584221f11fb0b3fff637b3384278e29b0b15d3",
+   "source": "svyaz/state/storoj-timer.sh"
+  },
+  {
+   "path": "svyaz/sudya/codex_provider.py",
+   "sha256": "1d30fe9b11b9052571334ec50497886c8b24d57fe104b07de8cd546e1f5ef7f2",
+   "source": "svyaz/sudya/codex_provider.py"
+  },
+  {
+   "path": "svyaz/sudya/proba_mosta.py",
+   "sha256": "a01774c6c723ab32873f6b13f9f140dc37dd6df1c369aaf82221c0e19e4f8321",
+   "source": "svyaz/sudya/proba_mosta.py"
+  },
+  {
+   "path": "svyaz/sudya/sudit.py",
+   "sha256": "fa0491bf845442d3feb38e08c07bd73923119899aaf6ec7872938d1467219c6e",
+   "source": "svyaz/sudya/sudit.py"
+  },
+  {
+   "path": "svyaz/tests/test_link.py",
+   "sha256": "5de353d65f3c708639705ad610957c0c4b584369aad3a59830ce1c19906e8772",
+   "source": "svyaz/tests/test_link.py"
+  },
+  {
+   "path": "svyaz/tests/test_watch.py",
+   "sha256": "fec47099e4db326312c7f63f91adc96341e43c9bf5aee662e9e7c91f8a223de9",
+   "source": "svyaz/tests/test_watch.py"
+  },
+  {
+   "path": "svyaz/tests/test_watchman.py",
+   "sha256": "fb59c4289ea763bfcaed58770fbe6cbc57b702101a3407454d5747565e629239",
+   "source": "svyaz/tests/test_watchman.py"
+  },
+  {
+   "path": "sync/README.md",
+   "sha256": "273be6d5f737ae4879548a6f4480e2fd3f16468e3ac47f700456bcf6e39ddc77",
+   "source": "sync/README.md"
+  },
+  {
+   "path": "sync/aion-control-sync.sh",
+   "sha256": "2723d43425910aebbaa9f6770ad62337243616f067f0d1346e0ab78e5031f7dd",
+   "source": "sync/aion-control-sync.sh"
+  },
+  {
+   "path": "sync/com.aion.control-sync.plist",
+   "sha256": "f3202f851e28ceffff453fb1c5438e74e4aba28ca42098304bffdfc1f9f2346d",
+   "source": "sync/com.aion.control-sync.plist"
+  },
+  {
+   "path": "sync/com.aion.kopiya.plist",
+   "sha256": "b42e876f5b4a0f9c86ac1b00f6586a49e594aaaca14cfeb2d5f1e17b0d8982fc",
+   "source": "sync/com.aion.kopiya.plist"
+  },
+  {
+   "path": "sync/install-launchd.sh",
+   "sha256": "393224db18ec5b2a37a7d43b95f5dc89a7462168811d9dfd92fc0e6ee64ddc48",
+   "source": "sync/install-launchd.sh"
+  },
+  {
+   "path": "sync/launchd-runner.py",
+   "sha256": "dc9a0c29ee3dd7d1fcf2b0495f9e52d449b4d5a96888326a868e52375a52afe7",
+   "source": "sync/launchd-runner.py"
+  },
+  {
+   "path": "sync/uninstall-launchd.sh",
+   "sha256": "82359a8d7c69eba2ce14a1d63fa41bef40d3fd6204af18eb8dfbe17de58b1d81",
+   "source": "sync/uninstall-launchd.sh"
+  }
+ ]
+}

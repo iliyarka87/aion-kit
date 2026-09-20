@@ -1,0 +1,1 @@
+{"PATTERN_ID": "PAT-001", "NAME": "evidence before DONE", "PROVEN_BY": "N-L0-02", "WHAT": "the worker returns PASS_CANDIDATE with evidence files; only the controller writes DONE after the judge", "ACCEPTANCE": "validate without --evidence is refused", "EVIDENCE": ["evidence/N-L0-02/vyvod-prob.txt"], "DONE_BY": "director", "SOURCE": "checklist/letopis.ndjson"}

@@ -1,0 +1,1 @@
+{"t": "2026-01-01T09:00:00+00:00", "type": "code", "paths": ["checklist/vorota.py"], "layers": {"direct": 1, "affected": 1, "invariants": 12, "extended": 0}, "runs": 14, "why": ["type code: direct — probes of the changed paths (1); affected — dependants (1); invariants — cheap ones always (12)"], "total_seconds": 1.3, "result": "PASS"}

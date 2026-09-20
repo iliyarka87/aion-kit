@@ -1,0 +1,1 @@
+{"METHOD_ID": "M-001", "PATH": "checklist/vorota.py", "PURPOSE": "mechanical lock on the checklist: dispatch / report / validate / finding / next-ready", "COMMANDS": ["python3 checklist/vorota.py status", "python3 checklist/vorota.py report PASS_CANDIDATE --by worker --evidence <file>"], "SOURCE": "checklist/README.md"}

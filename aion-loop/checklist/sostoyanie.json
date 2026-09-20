@@ -1,0 +1,44 @@
+{
+ "опр_sha256": "d3c12136330c3418c23a196f4e7d5fc958df318517083babc8e829b8de3f40c2",
+ "active": null,
+ "max_active": 1,
+ "пункты": {
+  "N-L0-00": {
+   "state": "READY",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L0-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L0-02": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L0-05": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-L1-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  },
+  "N-COMPLETE-01": {
+   "state": "LOCKED",
+   "attempts": [],
+   "evidence": [],
+   "done_by": null
+  }
+ },
+ "находки": []
+}

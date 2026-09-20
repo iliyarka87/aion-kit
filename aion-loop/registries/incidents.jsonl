@@ -1,0 +1,1 @@
+{"INCIDENT_ID": "INC-2026-01-01-01", "WHEN": "2026-01-01T09:00:00+00:00", "WHAT": "late regression during the observation period after a promotion; rolled back to the previous stable tag", "FAILURE_FAMILY": "LATE_REGRESSION", "FAILURE_REF": "NEW-2026-01-01-01", "EVIDENCE": ["registries/nablyudeniya.ndjson"], "STATUS": "CLOSED"}
