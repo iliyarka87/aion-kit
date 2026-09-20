@@ -339,7 +339,7 @@
   },
   {
    "path": "svyaz/tests/test_watchman.py",
-   "sha256": "fb59c4289ea763bfcaed58770fbe6cbc57b702101a3407454d5747565e629239",
+   "sha256": "78b1937040512dc43298a1914bfae32725cb6f87d396f1f6f03cd36a5f48c93f",
    "source": "svyaz/tests/test_watchman.py"
   },
   {
